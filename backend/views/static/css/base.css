@@ -1,0 +1,49 @@
+
+
+.searchResult p{
+/*	display: block;
+	width:100%;*/
+	/*margin-left: 30%; */
+
+}
+.searchResult p input[type='text'],select,input[type='password']{
+	width: 180px;
+	height:30px;
+	line-height: 30x;
+	box-sizing: border-box;
+}
+.searchResult p select{
+	width: 180px;
+	height:30px;
+	line-height: 30px;
+	box-sizing: border-box;
+}
+.searchResult p span:first-child{
+	display: inline-block;
+	width: 15%;
+	text-align: right;
+}
+
+.content {
+	padding-bottom: 20px;
+}
+div.topNav{
+	border-bottom: 1px solid #e0e9f4;
+}
+em{
+ font-style: unset;
+}
+
+/*错误提示信息*/
+em.error_tips{
+	color:red;
+	margin-left: 10px;
+}
+
+em.required_tips{
+	color:red;
+}
+
+.hidden{
+	display: none;
+}

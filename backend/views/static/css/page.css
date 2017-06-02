@@ -1,0 +1,19 @@
+/*登录信息*/
+
+
+#loginInfo h2 { margin-bottom: 10px; font-size: 16px; }
+#loginInfo #info { background-color: #fff; border: 1px solid #e0e9f4; }
+#loginInfo #info ul { margin: 0; padding: 0; }
+#loginInfo #info li span:first-child { display: inline-block; width: 160px; line-height: 30px; text-align: right; }
+#loginInfo #info li span:last-child { color: #666; }
+
+
+/*公司信息*/
+#componyInfo h2 { margin-bottom: 10px; font-size: 16px; }
+#componyInfo #info { background-color: #fff; border: 1px solid #e0e9f4; }
+#componyInfo #info ul { margin: 0; padding: 0; }
+#componyInfo #info li span:first-child { display: inline-block; width: 160px; line-height: 30px; text-align: right; }
+#componyInfo #info li span:last-child { color: #666; }
+#componyInfo .btnBox2 { margin-top: 30px; }
+
+#componyInfo #alertpaymentpassword label span:first-child, #componyInfo #alertloginpassword label span:first-child { width: 100px;}

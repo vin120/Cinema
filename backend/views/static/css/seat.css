@@ -1,0 +1,310 @@
+/*
+ *
+ *   忆条街电影购票-选座样式
+ *   version 1.0
+ *
+*/
+
+/*顶部开始-------------------------*/
+
+.cinema-info {
+	position: fixed;
+	width: 100%;
+	left: 0;
+	background-color: white;
+	/*border-bottom: 1px solid #ccc;*/
+}
+
+.movie-info {
+	margin: 10px 15px 0px 15px;
+	padding-bottom: 5px;
+	border-bottom: 1px solid #ccc;
+}
+
+.movie-info h3 {
+	font-size: 20px;
+	margin: 0;
+	color: #333;
+}
+
+.movie-info span {
+	font-size: 13px;
+	color: #9d9d9d;
+}
+
+.seat-tips {
+	margin: 0 15px 0 15px;
+	font-size: 12px;
+}
+
+.seat-tips ul {
+	list-style-type: none;
+	font-size: 15px;
+	margin-bottom: 3px;
+}
+
+.seat-tips ul li {
+	float: left;
+	width: 25%;
+	margin-top: 0;
+	padding-bottom: 3px;
+}
+
+.seat {
+	display: inline-block;
+	width: 20px;
+	height: 20px;
+	line-height: 20px;
+	background-size: 20px 20px;
+}
+
+/*.seat.active {*/
+	/*background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAABHNCS…XGUFXVjkk/VVWFMQbgoQNcWWsja+0JcLBb2ncfwCNw/Qk+3GWURNQyowAAAABJRU5ErkJggg==);*/
+/*}*/
+
+/*顶部结束-------------------------*/
+
+/*选座部分开始-------------------------*/
+
+.seat-main {
+
+	margin-top: 100px;
+	width: 100%;
+
+	/*position: fixed;*/
+	/*overflow: scroll;*/
+	/*height: 1000px;*/
+	/*background-color: blue;*/
+	/*overflow-x: scroll;*/
+}
+
+
+.front {
+	width: 100%;
+	margin: 5px 0px 45px 0px;
+	background-color: #f0f0f0;
+	color: #666;
+	text-align: center;
+	padding: 3px;
+	border-radius: 5px;
+}
+
+.booking-details {
+	/*float: left;*/
+	position: relative;
+	/*width: 100%;*/
+	margin: 0 15px;
+	border-bottom: 1px solid #ccc;
+}
+
+.booking-details ul {
+	list-style-type: none;
+}
+
+.booking-details h3 {
+	margin: 5px 5px 0 0;
+	font-size: 16px;
+}
+
+.booking-details p {
+	line-height: 20px;
+	font-size: 12px;
+	color: #999;
+	margin-bottom: 0;
+}
+
+.booking-details p span {
+	color: #666;
+}
+
+div.seatCharts-cell {
+	color: #182C4E;
+	height: 25px;
+	width: 25px;
+	line-height: 25px;
+	margin: 3px;
+	float: left;
+	text-align: center;
+	outline: none;
+	font-size: 13px;
+}
+
+div.seatCharts-seat {
+	color: #fff;
+	cursor: pointer;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+}
+
+div.seatCharts-row {
+	height: 35px;
+	/*width: 850px;*/
+}
+
+div.seatCharts-seat.available {
+	background-color: #B9DEA0;
+}
+
+div.seatCharts-seat.focused {
+	background-color: #76B474;
+	border: none;
+}
+
+div.seatCharts-seat.selected {
+	background-color: #E6CAC4;
+}
+
+div.seatCharts-seat.f-selected {
+	background-color: #E6CAC4;
+}
+
+div.seatCharts-seat.unavailable {
+	background-color: #472B34;
+	cursor: not-allowed;
+}
+
+div.seatCharts-seat.forbidden {
+	background-color: #eb3c3c;
+}
+
+div.seatCharts-container {
+	/*border-right: 1px dotted #adadad;*/
+	/*width: 850px;*/
+	width: 850px;
+	padding: 2px;
+	/*float: left;*/
+	margin: auto;
+}
+
+div.seatCharts-legend {
+	padding-left: 0px;
+	/*position: absolute;*/
+	bottom: 16px;
+}
+
+ul.seatCharts-legendList {
+	padding-left: 0px;
+}
+
+.seatCharts-legendItem {
+	float: left;
+	width: 90px;
+	margin-top: 10px;
+	line-height: 2;
+}
+
+span.seatCharts-legendDescription {
+	margin-left: 5px;
+	line-height: 30px;
+	font-size: 13px;
+	color: #333;
+}
+
+.open-button {
+	display: inline-block;
+	float: right;
+	width: 100px;
+	height: 36px;
+	line-height: 26px;
+	margin: 5px auto;
+	border: 1px solid #eb9316;
+	color: #ffffff;
+	background-color: #fa9e16;
+	border-radius: 5px;
+	font-size: 14px;
+	cursor: pointer;
+}
+
+.close-button {
+	display: inline-block;
+	float: right;
+	width: 100px;
+	height: 36px;
+	line-height: 26px;
+	margin: 5px auto;
+	border: 1px solid #eb3c3c;
+	color: #ffffff;
+	background-color: #f93c3c;
+	border-radius: 5px;
+	font-size: 14px;
+	cursor: pointer;
+}
+
+#selected-seats {
+	min-height: 26px;
+	overflow-y: auto;
+	overflow-x: none;
+	width: 100%;
+	padding: 0;
+	margin-bottom: 5px;
+
+}
+
+#selected-seats li {
+	float: left;
+	width: 20%;
+	height: 26px;
+	line-height: 26px;
+	border: 1px solid #d3d3d3;
+	background: #f7f7f7;
+	color: #333;
+	margin: 0px 6px;
+	font-size: 12px;
+	font-weight: bold;
+	text-align: center;
+}
+
+#selected-seats li:nth-child(1) {
+	margin-left: 0;
+}
+
+#selected-seats li:nth-child(4n+1) {
+	margin-left: 0;
+}
+
+#selected-seats li:nth-child(n+5) {
+	margin-top: 5px;
+}
+
+.seatCharts-seat:nth-child(13) {
+	margin-right: 50px;
+}
+
+/*选座部分结束-------------------------*/
+
+/*底部开始-------------------------*/
+.booking-info {
+	position: fixed;
+	left: 0;
+	bottom: 0;
+	width: 100%;
+	background-color: #FFF;
+	border-top: 1px solid #ccc;
+}
+
+.booking-price {
+	margin: 0 15px;
+}
+
+.booking-price b{
+	color: #f93c3c;
+	font-size: 22px;
+}
+
+.booking-price p{
+	color: #999;
+	font-size: 12px;
+	line-height: 14px;
+	margin: 0;
+}
+
+.booking-price button:nth-child(1) {
+	margin-left: 20px;
+}
+
+.price-left {
+	display: inline-block;
+}
+
+/*底部结束-------------------------*/
