@@ -79,9 +79,21 @@
 
 var now = "<?php echo $data['order_time']?>";
 
-$('#time').countdown(now, function(event) {
-	$(this).html(event.strftime('%M:%S'));
+// $('#time').countdown(now, function(event) {
+// 	$(this).html(event.strftime('%M:%S'));
+// });
+
+
+$('#time').countdown(now).on('update.countdown', function(event){  
+	$(this).html(event.strftime('%M:%S'));  
+}).on('finish.countdown', function(event){
+	$(this).html(event.strftime('%M:%S'));  
+	setTimeout(function(){
+		alert('支付超时，该订单已失效！');
+		window.location.href = "<?php echo Url::to('/index/index')?>";
+	},1000);
 });
+
 
 
 $("button").click(function(){

@@ -79,7 +79,7 @@ $(function() {
 							for (var i = 0; i < data.lists.length; i++) {
 								switch (data.lists[i].status) {
 								case 0:
-									status = '<span class="order-status">待付款</span>';
+									status = '<a href="<a href="<?php echo Url::to('/order/pay');?>?ssid='+data.lists[i].ssid+'" class="line-btn order-status status-f a_none">付款</a>';
 									break;
 								case 1:
 									status = '<span class="order-status">已完成</span>';
@@ -135,7 +135,7 @@ $(function() {
 				dataType: "json",
 				success: function(data) {
 					// var data = eval("(" + data + ")");
-					// console.log(data);
+// 					console.log(data);
 					// console.log(data.lists);
 					if(typeof(data.lists) != "undefined"){
 						if(data.lists.length > 0){
@@ -144,7 +144,7 @@ $(function() {
 							for (var i = 0; i < arrLen; i++) {
 								switch (data.lists[i].status) {
 								case 0:
-									status = '<span class="order-status">待付款</span>';
+									status = '<a href="<?php echo Url::to('/order/pay');?>?ssid='+data.lists[i].ssid+'" class="line-btn order-status status-f a_none">付款</a>';
 									break;
 								case 1:
 									status = '<span class="order-status">已完成</span>';

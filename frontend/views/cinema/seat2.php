@@ -117,12 +117,18 @@ $(function() {
 			},
 			click: function() {	//点击事件
 				if (this.status() == "available") {	//可选座
-					$("<li>" +(rowArray[this.settings.row])+ "行" + this.settings.label + "座</li>").attr("id", "cart-item-" + this.settings.id).data("seatId", this.settings.id).appendTo(d);
-					f.text(e.find("selected").length + 1);
-					c.text(b(e) + a);
-					
-					seatArray.push(this.settings.id);
-					return "selected"
+					 // 限制只能選中4個座位
+                    if(e.find('selected').length+1 > 4){
+                        alert('一次最多購買4張');
+                        return 'available';
+                    }else{
+						$("<li>" +(rowArray[this.settings.row])+ "行" + this.settings.label + "座</li>").attr("id", "cart-item-" + this.settings.id).data("seatId", this.settings.id).appendTo(d);
+						f.text(e.find("selected").length + 1);
+						c.text(b(e) + a);
+						
+						seatArray.push(this.settings.id);
+						return "selected"
+                    }
 				} else {
 					if (this.status() == "selected") {	//已选中
 						f.text(e.find("selected").length - 1);
