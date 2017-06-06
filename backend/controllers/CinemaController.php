@@ -46,9 +46,10 @@ class CinemaController extends BaseController
 			$cinema_phone = isset($_POST['cinema_phone']) ? $_POST['cinema_phone'] : '';
 			$cinema_address = isset($_POST['cinema_address']) ? $_POST['cinema_address'] : '';
 			$low_price = isset($_POST['low_price']) ? $_POST['low_price'] : '';
+			$cinema_work_time = isset($_POST['cinema_work_time']) ? $_POST['cinema_work_time'] :'';
 			$status = isset($_POST['status']) ? $_POST['status'] : 1;
 			
-			$sql = "INSERT INTO `y_cinema` (cinema_name,cinema_phone,low_price,cinema_address,status) VALUES ('{$cinema_name}','{$cinema_phone}','{$low_price}','{$cinema_address}','{$status}')";
+			$sql = "INSERT INTO `y_cinema` (cinema_name,cinema_phone,low_price,cinema_address,cinema_work_time,status) VALUES ('{$cinema_name}','{$cinema_phone}','{$low_price}','{$cinema_address}','{$cinema_work_time}','{$status}')";
 			
 			$commen = $db->beginTransaction();
 			try{
@@ -160,10 +161,11 @@ class CinemaController extends BaseController
 			$cinema_phone = isset($_POST['cinema_phone']) ? $_POST['cinema_phone'] : '';
 			$low_price = isset($_POST['low_price']) ? $_POST['low_price'] : '';
 			$cinema_address = isset($_POST['cinema_address']) ? $_POST['cinema_address'] : '';
+			$cinema_work_time = isset($_POST['cinema_work_time']) ? $_POST['cinema_work_time'] :'';
 			$status = isset($_POST['status']) ? $_POST['status'] : 1;
 						
 			$sql = "UPDATE `y_cinema` 
-			       SET cinema_name='{$cinema_name}',cinema_phone='{$cinema_phone}',low_price='{$low_price}',cinema_address='{$cinema_address}',status='{$status}' 
+			       SET cinema_name='{$cinema_name}',cinema_phone='{$cinema_phone}',low_price='{$low_price}',cinema_address='{$cinema_address}',cinema_work_time='{$cinema_work_time}',status='{$status}' 
 			       WHERE cinema_id='{$cinema_id}' ";
 			
 			$commen = $db->beginTransaction();

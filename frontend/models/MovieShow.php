@@ -14,5 +14,4 @@ class MovieShow extends ActiveRecord
 	
 	
 	
-	
 }

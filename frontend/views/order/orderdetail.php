@@ -35,11 +35,12 @@
 			<div class="movie-wrap">
 				<div class="movie-name">
 					<h3><?php echo $data['movie_name']?></h3>
-					<span><?php 
-						if($data['status'] == 0) echo "待付款";
-						else if($data['status'] == 1) echo "已完成";
-						else if($data['status'] == 2) echo "已過期";
-					?></span>
+					<span>
+						<?php if($data['status'] == 0): ?>
+							<a href="<?php echo Url::to(['/order/pay','ssid'=>$data['order_code']])?>" class="line-btn movie-pay a_none">付款</a>
+						<?php elseif ($data['status'] == 1) : echo "已完成";?>
+						<?php endif;?>
+					</span>
 				</div>
 				<p class="movie-time"><?php echo $data['date']." (".$data['movie_type'].")"?></p>
 				<p><?php echo $data['cinema_name']." ".$data['room_name']?></p>

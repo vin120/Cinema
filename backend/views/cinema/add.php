@@ -97,6 +97,11 @@
 				<em class="required_tips">*</em>
 			</p>
 			<p>
+				<span>工作时间：</span>
+				<input type="text" name="cinema_work_time"  />
+				<em class="required_tips">*</em>
+			</p>
+			<p>
 				<span>狀態：</span>
 				<select name="state">
 					<option value="1">啓用</option>

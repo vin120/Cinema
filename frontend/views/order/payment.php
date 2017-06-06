@@ -2,50 +2,134 @@
 	$this->title = '憶條街電影購票';
 	use frontend\views\myasset\PublicAsset;
 	use frontend\views\myasset\PingPlusPlusAsset;
+	use frontend\views\myasset\PayWayAsset;
 	use yii\helpers\Url;
 	PublicAsset::register($this);
 	PingPlusPlusAsset::register($this);
+	PayWayAsset::register($this);
 	$baseUrl = $this->assetBundles[PublicAsset::className()]->baseUrl . '/';
 ?>
 
-訂單號:<?php echo $data['order_code']?>
-<br>
-時間：<?php echo $data['date']?>
-<br>
-座位：<?php echo $data['seats']?>
-<br>
-影片：<?php echo $data['movie_name']?>
-<br>
-電影院：<?php echo $data['cinema_name']?>
-<br>
-大廳：<?php echo $data['room_name']?>
-<br>
-總價：<?php echo $data['total_money']?>
-<br>
-
-<div id="wrap">
-	<label><input name="payMethod" type="radio" value="1" checked="checked"/>支付寶 </label>
+<header class="navbar navbar-default navbar-fixed-top">
+<div class="container">
+      <div class="row">
+          <div class="col-xs-2">
+              <div class="nav-wrap-left">
+                  <a style="border:none;" href="javascript:history.back()"><i class="fa fa-angle-left fa-2x"></i></a>
+              </div>
+          </div>
+          <div class="col-xs-8">
+              <h4 class="title-text text-center">付款</h4>
+          </div>
+          <div class="col-xs-2">
+              <div class="nav-wrap-right">
+                  <a style="border:none;" href="<?php echo Url::toRoute('user/index');?>">
+                      <i class="fa fa-user-circle fa-lg"></i>
+                  </a>
+              </div>
+          </div>
+      </div>
 </div>
+</header>
 
-<div class="pay-btn">
+
+<div class="main container">
+	<div class="row">
+		<div class="col-xs-12 pay-time">
+			<p>支付剩余時間：<span id="time"></span></p>
+		</div>
+
+		<div class="col-xs-12 pay-way">
+			<img src="<?php echo $baseUrl?>images/alipay_g2.png"/>
+			<div class="way-text">
+				<h3>支付寶支付</h3>
+				<span>推薦有支付寶賬戶的用戶使用</span>
+			</div>
+			<div class="icheckbox">
+				<input value="1" type="radio" name="square-radio" checked>
+			</div>
+		</div>
+        
+		<div class="col-xs-12 pay-way">
+			<img src="<?php echo $baseUrl?>images/weixin_g2.png"/>
+			<div class="way-text">
+				<h3>微信支付</h3>
+				<span>推薦安裝微信6.0及以上版本的用戶使用</span>
+			</div>
+			<div class="icheckbox">
+				<input value="2" type="radio" name="square-radio">
+			</div>
+		</div>
+
+		<div class="col-xs-12 pay-way" style="margin-top:0px;">
+			<img src="<?php echo $baseUrl?>images/bank_g2.png"/>
+			<div class="way-text">
+				<h3>銀行卡支付</h3>
+				<span>信用卡儲蓄卡付款，無需開通網銀</span>
+			</div>
+			<div class="icheckbox">
+				<input value="3" type="radio" name="square-radio">
+			</div>
+		</div>   
+	</div>
+
+	<div class="pay-btn">
 		<div class="container">
 			<div class="row">
 				<div class="col-xs-12">
-					<button class="btn center-block">確定付款</button>
+					<p>需支付：<b><?php echo $data['total_money']?>MOP</b></p>
+				</div>
+
+				<div class="col-xs-12">
+					<button id="pay" class="btn center-block">確定付款</button>
 				</div>
 			</div>
 		</div>
 	</div>
-
-
+</div>
 
 <script type="text/javascript">
 <?php $this->beginBlock('js_end') ?>
 
 $(function() {
 
+	var now = "<?php echo $data['order_time']?>";
+
+	$('#time').countdown(now, function(event) {
+		$(this).html(event.strftime('%M:%S'));
+	});
+
+
+	$('input').iCheck({
+
+		checkboxClass: 'icheckbox_square-red',  // 注意square和red的對應關系
+
+		radioClass: 'iradio_square-red',
+
+		increaseArea: '20%' // optional
+
+	});
+
+
+	$("#pay").click(function(){
+		var pay_way = $("input[type='radio']:checked").val();
+        
+		if(pay_way == 1){
+			wap_pay(1) 
+		}else if(pay_way == 2){
+			wap_pay(2) 
+		}else if(pay_way == 3){
+			wap_pay(3) 
+		}
+	});
+
+	$(".pay-way").click(function(){
+		$(this).find('input').iCheck('check');
+	});
+
+	
 	var url = "<?php echo Yii::$app->params['pay_url'];?>";
-	var channel = $('input:radio:checked').val();
+
 	var _csrf = '<?php echo Yii::$app->request->csrfToken?>';
 	   
 	function wap_pay(channel) {
@@ -75,10 +159,6 @@ $(function() {
             }
         }
     }
-
-	$("button").click(function(){
-		wap_pay(channel);
-	});
 
 	
 });

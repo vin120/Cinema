@@ -10,90 +10,135 @@ use frontend\models\MovieShow;
 use frontend\models\Cinema;
 use frontend\models\Room;
 use frontend\models\Movie;
+use frontend\models\User;
+use frontend\models\MovieSeat;
+use frontend\components\Helper;
+
 
 class OrderController extends BaseController
 {
 	
-	
-	
-	/**
-	 * 取票機 「打印電影票」 接口
+	/** 
+	 * 選座位
 	 * @return number[]|string[]
 	 */
-	public function actionCheckticket()
+	public function actionPickseat()
 	{
-		$response = [];
-		$data = [];
-		$datas = [];
-		
-		if(Yii::$app->request->isPost){
-			$ssid = Yii::$app->request->post('ssid');
-			
-			if(!empty($ssid)) {
-				$order = MovieOnlineOrder::find()->where('order_code = :order_code',[':order_code'=>$ssid])->one();
-				
-				if(!is_null($order)){
-					
-					if($order->status == 1){
-						//已支付
-						
-						//更改數據狀態，返回電影票信息
-						MovieOnlineOrder::updateAll(['status' => 3], 'order_code = :order_code',[':order_code'=>$ssid]);
-						
-						$seats = explode(",", $order->seat_names);
-						
-						$movie_show = MovieShow::find()->where('id = :id',['id'=>$order->movie_show_id])->one();
-						
-						$cinema = Cinema::find()->where('cinema_id = :cinema_id',[':cinema_id'=>$movie_show->cinema_id])->one();
-						$room = Room::find()->where('room_id = :room_id',[':room_id'=>$movie_show->room_id])->one();
-						$movie = Movie::find()->where('movie_id = :movie_id',[':movie_id'=>$movie_show->movie_id])->one();
-						
-						//拼接時間
-						$date = explode("-", explode(" ", $movie_show->time_begin)[0])[1]."-".explode("-", explode(" ", $movie_show->time_begin)[0])[2] ;
-						$time = explode(":", explode(" ", $movie_show->time_begin)[1])[0].":".explode(":", explode(" ", $movie_show->time_begin)[1])[1] ;
-						
-						foreach($seats as $row) {
-
-							$data['cinema'] = $cinema->cinema_name;
-							$data['hall'] = $room->room_name;
-							$data['seat'] = $row;
-							$data['date'] = $date;
-							$data['time'] = $time;
-							$data['price'] = $order->price + $cinema->service_price;
-							$data['movie'] = $movie->movie_name;
-							$data['ticket_type'] = "網絡票";
-							$data['service_charge'] = $cinema->service_price;
-							$data['ssid'] = $ssid;
-							
-							$datas[] = $data;
-						}
-						
 	
-						$response = ['code' => 1,'msg' => '取票成功','data'=>$datas];
-						
-					} else if ($order->status == 3){
-						//電影票已經被提取過
-						$response = ['code'=> 4,'msg'=>'電影票已經被提取','data'=>''];
-					} else {
-						//未完成的訂單(找不到正確的訂單信息)
-						$response = ['code'=> 3,'msg'=>'請輸入正確的驗證碼','data'=>''];
-					}
-				} else {
-					//找不到正確的訂單信息
-					$response = ['code'=> 3,'msg'=>'請輸入正確的驗證碼','data'=>''];
-				}
-				
-			} else {
-				//沒有把訂單號傳過來
-				$response = ['code'=> 2,'msg'=>'請填寫驗證碼','data'=>''];
-			}
-			
-		} else {
-			$response = ['code'=> 2,'msg'=>'請填寫驗證碼','data'=>''];
+		$uid = Yii::$app->request->post('uid');
+		$appsecret = Yii::$app->request->post('appsecret');
+		
+		$movie_id = Yii::$app->request->post('movie_id');
+		$seats = Yii::$app->request->post('seats');
+		
+		if(empty($uid) || empty($appsecret)){
+			$response = ['code' => 2,'msg' => 'uid和appsecret 不能爲空'];
+			return $response;
+			Yii::$app->end();
+		}
+	
+		$user = User::find()->where('user_id = :user_id',[':user_id'=>$uid])->one();
+		
+		if(is_null($user)){
+			$response = ['code' => 3,'msg' => '獲取不到用戶信息'];
+			return $response;
+			Yii::$app->end();
 		}
 		
+		
+		if($appsecret != $user['appsecret']){
+			$response = ['code' => 4,'msg' => '沒有權限，請先登錄'];
+			return $response;
+			Yii::$app->end();
+		}
+		if(empty($movie_id)){
+			$response = ['code' => 5,'msg' => 'movie_id不能爲空'];
+			return $response;
+			Yii::$app->end();
+		}
+		
+		if(empty($seats)){
+			$response = ['code' => 6,'msg' => 'seats不能爲空'];
+			return $response;
+			Yii::$app->end();
+		}
+		
+		
+		$data =[];
+		$seatArray = explode(",", $seats);
+		$movie_show = MovieShow::find()->where('id = :id',[':id'=>$movie_id])->one();
+		
+		$online_order = new MovieOnlineOrder();
+		
+		$seat_ids = "";
+		$seat_names = "";
+		
+		$transaction = Yii::$app->db->beginTransaction();
+		try{
+				
+			foreach($seatArray as $row){
+		
+				$movie_seat = MovieSeat::find()->where('seat_id = :seat_id',[':seat_id'=>$row])->one();
+		
+				if(!is_null($movie_seat)){
+					$response = ['code'=> 7,'msg' => "該位置已被預訂"];
+					return $response;
+					Yii::$app->end();
+				}
+		
+				$seat = new MovieSeat();
+				$seat->show_id = $movie_id;
+				$seat->seat_id = $row;
+				$seat->seat_name = explode("_", $row)[0]."排".explode("_", $row)[1]."座";
+				$seat->cur_time = date("Y-m-d H:i:s",time());
+				$seat->status = 1;
+					
+				$seat_ids .= $row.",";
+				$seat_names .= explode("_", $row)[0]."排".explode("_", $row)[1]."座".",";
+					
+				$seat->save();
+			}
+				
+				
+			$online_order->movie_show_id = $movie_id;
+			$online_order->phone = $user->user_phone;
+			$online_order->seat_ids = rtrim($seat_ids,",");
+			$online_order->seat_names = rtrim($seat_names,",");
+			$online_order->order_time = date("Y-m-d H:i:s",time());
+			$online_order->price = $movie_show->price;
+			$online_order->count = count($seatArray);
+			$online_order->total_money = (int)$movie_show->price * (int)count($seatArray);
+			$online_order->order_code = date('Ymd',time()).Helper::rand_number().Helper::rand_number();//Helper::get_order_sn();
+			$online_order->order_number = Helper::createOrderno();
+			$online_order->status = 0;
+				
+			$online_order->save();
+				
+			$transaction->commit();
+				
+			$data['ssid'] = $online_order->order_code;
+			
+			
+			$response = ['code'=> 1,'msg'=>'下單成功','data'=>$data];
+				
+			
+		} catch (Exception $e){
+				
+			$transaction->rollBack();
+			$response = ['code'=> 8,'msg' => "出現了未知錯誤"];
+		}
+		
+		
 		return $response;
+		
 	}
+	
+	
+	public function actionPay()
+	{
+		
+	}
+	
 	
 	
 	

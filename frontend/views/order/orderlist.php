@@ -40,6 +40,8 @@
 
 
 </div>
+
+
 <script type="text/javascript">
 <?php $this->beginBlock('js_end') ?>
 
@@ -60,7 +62,7 @@ $(function() {
 			domClass: "dropload-down",
 			domRefresh: '<div class="dropload-refresh">↑上拉加載更多</div>',
 			domLoad: '<div class="dropload-load"><span class="loading"></span>加載中...</div>',
-			domNoData: '<div class="dropload-noData">暫無數據</div>'
+			domNoData: '<div class="dropload-noData">無更多數據</div>'
 		},
 		loadUpFn: function(me) {
 			var json_url = '<?php echo Url::to("/order/jsonurl");?>?page=1';
@@ -72,33 +74,53 @@ $(function() {
 					
 					var result = "";
 					var status = "";
-					for (var i = 0; i < data.lists.length; i++) {
-						switch (data.lists[i].status) {
-						case 0:
-							status = '<span class="order-status">待付款</span>';
-							break;
-						case 1:
-							status = '<span class="order-status">已完成</span>';
-							break;
-						case 2:
-							status = '<span class="order-status status-f">已失效</span>';
-							break;
-						
+					if(typeof(data.lists) != "undefined"){
+						if(data.lists.length > 0){
+							for (var i = 0; i < data.lists.length; i++) {
+								switch (data.lists[i].status) {
+								case 0:
+									status = '<span class="order-status">待付款</span>';
+									break;
+								case 1:
+									status = '<span class="order-status">已完成</span>';
+									break;
+								case 2:
+									status = '<span class="order-status status-f">已失效</span>';
+									break;
+								
+								}
+								result += '<div class="col-xs-12 order-wrap"><a class="a_none" href="<?php echo Url::to(['/cinema/index']);?>?id='+data.lists[i].cinema_id+'"><div class="order-cinema"><span>' + data.lists[i].cinema_name + '</span><div class="order-more"><i class="fa fa-angle-right"></i></div></div></a><div class="bottom-line"></div><a class="a_none" href="<?php echo Url::toRoute(['/order/orderdetail']);?>?ssid='+data.lists[i].ssid+'"><div class="order-info"><div class="movie-img"><img src="<?php echo Yii::$app->params['img_url'];?>/' + data.lists[i].pic + '"/></div><div class="movie-info"><h4>' + data.lists[i].movie_name + data.lists[i].counts + "</h4><p>" + data.lists[i].date + "</p><p>" + data.lists[i].hall + "  " + data.lists[i].seats + '</p></div></div></a><div class="bottom-line"></div><div class="order-price"><p>總價：<span>' + data.lists[i].price + "</span> MOP</p>" + status + "</div></div>"
+							}
+							setTimeout(function() {
+								$(".lists").html(result);
+								me.resetload();
+								page = 1;
+								me.unlock();
+								me.noData(false);
+							},
+							1000)
+							
+							// if (data.lists.length < 10) {
+							// 	me.lock();
+							// 	me.noData();
+							// }
+
+						}else{
+							me.lock();
+							me.noData();
+							$('.dropload-down').html('<div class="dropload-noData">暫無數據</div>');
 						}
-						result += '<div class="col-xs-12 order-wrap"><a class="a_none" href="<?php echo Url::to(['/cinema/index']);?>?id='+data.lists[i].cinema_id+'"><div class="order-cinema"><span>' + data.lists[i].cinema_name + '</span><div class="order-more"><i class="fa fa-angle-right"></i></div></div></a><div class="bottom-line"></div><a class="a_none" href="<?php echo Url::toRoute(['/order/orderdetail']);?>?ssid='+data.lists[i].ssid+'"><div class="order-info"><div class="movie-img"><img src="<?php echo Yii::$app->params['img_url'];?>/' + data.lists[i].pic + '"/></div><div class="movie-info"><h4>' + data.lists[i].movie_name + data.lists[i].counts + "</h4><p>" + data.lists[i].date + "</p><p>" + data.lists[i].hall + "  " + data.lists[i].seats + '</p></div></div></a><div class="bottom-line"></div><div class="order-price"><p>總價：<span>' + data.lists[i].price + "</span> MOP</p>" + status + "</div></div>"
+					}else{
+						me.lock();
+						me.noData();
+						$('.dropload-down').html('<div class="dropload-noData">暫無數據</div>');
 					}
-					setTimeout(function() {
-						$(".lists").html(result);
-						me.resetload();
-						page = 1;
-						me.unlock();
-						me.noData(false)
-					},
-					1000)
+					
+					
 				},
 				error: function(xhr, type) {
 					alert("Ajax error!");
-					me.resetload()
+					me.resetload();
 				}
 			})
 		},
@@ -110,38 +132,55 @@ $(function() {
 			$.ajax({
 				type: "GET",
 				url: json_url,
-				dataType: "text",
+				dataType: "json",
 				success: function(data) {
-					var data = eval("(" + data + ")");
-					var arrLen = data.lists.length;
-					if (arrLen > 0) {
-						for (var i = 0; i < arrLen; i++) {
-							switch (data.lists[i].status) {
-							case 0:
-								status = '<span class="order-status">待付款</span>';
-								break;
-							case 1:
-								status = '<span class="order-status">已完成</span>';
-								break;
-							case 2:
-								status = '<span class="order-status status-f">已失效</span>';
-								break;
+					// var data = eval("(" + data + ")");
+					// console.log(data);
+					// console.log(data.lists);
+					if(typeof(data.lists) != "undefined"){
+						if(data.lists.length > 0){
+							var arrLen = data.lists.length;
 							
+							for (var i = 0; i < arrLen; i++) {
+								switch (data.lists[i].status) {
+								case 0:
+									status = '<span class="order-status">待付款</span>';
+									break;
+								case 1:
+									status = '<span class="order-status">已完成</span>';
+									break;
+								case 2:
+									status = '<span class="order-status status-f">已失效</span>';
+									break;
+								
+								}
+								result += '<div class="col-xs-12 order-wrap"><a class="a_none" href="<?php echo Url::to(['/cinema/index']);?>?id='+data.lists[i].cinema_id+'"><div class="order-cinema"><span>' + data.lists[i].cinema_name + '</span><div class="order-more"><i class="fa fa-angle-right"></i></div></div></a><div class="bottom-line"></div><a class="a_none" href="<?php echo Url::toRoute(['/order/orderdetail']);?>?ssid='+data.lists[i].ssid+'"><div class="order-info"><div class="movie-img"><img src="<?php echo Yii::$app->params['img_url'];?>/' + data.lists[i].pic + '"/></div><div class="movie-info"><h4>' + data.lists[i].movie_name + data.lists[i].counts + "</h4><p>" + data.lists[i].date + "</p><p>" + data.lists[i].hall + "  " + data.lists[i].seats + '</p></div></div></a><div class="bottom-line"></div><div class="order-price"><p>總價：<span>' + data.lists[i].price + "</span> MOP</p>" + status + "</div></div>"
 							}
-							result += '<div class="col-xs-12 order-wrap"><a class="a_none" href="<?php echo Url::to(['/cinema/index']);?>?id='+data.lists[i].cinema_id+'"><div class="order-cinema"><span>' + data.lists[i].cinema_name + '</span><div class="order-more"><i class="fa fa-angle-right"></i></div></div></a><div class="bottom-line"></div><a class="a_none" href="<?php echo Url::toRoute(['/order/orderdetail']);?>?ssid='+data.lists[i].ssid+'"><div class="order-info"><div class="movie-img"><img src="<?php echo Yii::$app->params['img_url'];?>/' + data.lists[i].pic + '"/></div><div class="movie-info"><h4>' + data.lists[i].movie_name + data.lists[i].counts + "</h4><p>" + data.lists[i].date + "</p><p>" + data.lists[i].hall + "  " + data.lists[i].seats + '</p></div></div></a><div class="bottom-line"></div><div class="order-price"><p>總價：<span>' + data.lists[i].price + "</span> MOP</p>" + status + "</div></div>"
+
+							if (arrLen < 10) {
+								me.lock();
+								me.noData();
+							}
+							setTimeout(function() {
+								$(".lists").append(result);
+								me.resetload()
+							},
+							1000)
+						}else{
+							me.lock();
+							me.noData();
+							$('.dropload-down').html('<div class="dropload-noData">暫無數據</div>');
 						}
-					} else {
+					}else{
 						me.lock();
-						me.noData()
+						me.noData();
+						$('.dropload-down').html('<div class="dropload-noData">暫無數據</div>');
 					}
-					setTimeout(function() {
-						$(".lists").append(result);
-						me.resetload()
-					},
-					1000)
+					
+					
 				},
 				error: function(xhr, type) {
-					me.resetload()
+					me.resetload();
 				}
 			})
 		},

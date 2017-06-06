@@ -24,11 +24,16 @@ class CinemaController extends Controller
 		
 		if(Yii::$app->request->isGet){
 			$id = Yii::$app->request->get('id');
+			
 			$movie = Movie::find()->where('status = 1')->orderBy('movie_id desc')->all();
+			$cinema = Cinema::find()->where('cinema_id = :cinema_id',[':cinema_id'=>$id])->one();
+			$movie_time = [];
+			$data = [];
+			
 			
 			$now = date("Y-m-d H:i:s",time());
 			$movie_show = MovieShow::find()->where('time_begin > :now and  status = 1 and movie_id = :movie_id and cinema_id = :cinema_id ',['now'=>$now,':movie_id'=>$movie[0]['movie_id'],':cinema_id'=>$id ])->orderBy('time_begin asc')->all();
-			$movie_time = [];
+			
 			
 			foreach ($movie_show as $key => $value) {
 				$movie_time[$key] = Helper::getToday($value['time_begin']).Helper::getTimeFormat($value['time_begin']);
@@ -49,36 +54,13 @@ class CinemaController extends Controller
 				$last_day = date('Y-m-d',time());
 			}
 			
-			
-			$movie_show_today = MovieShow::find()->where('time_begin > :now and time_begin < :last_day and  status = 1 and movie_id = :movie_id and cinema_id = :cinema_id ',[':now'=>$now,':last_day'=>$last_day,':movie_id'=>$movie[0]['movie_id'],':cinema_id'=>$id ])->orderBy('time_begin asc')->all();
-			$data = [];
-			
-			
-			//关联其他数据表查询
-			foreach ($movie_show_today as $key => $value){
-				$type = MovieType::find()->where('type_id = :type_id',[':type_id'=>$value['type_id']])->one();
-				$cinema_room = Room::find()->where('room_id = :room_id',[':room_id'=>$value['room_id']])->one();
-				
-				$data[$key]['type_name'] = $type['type_name'];
-				$data[$key]['time_begin'] = $value->time_begin;
-				$data[$key]['time_end'] = $value->time_end;
-				$data[$key]['room_name'] = $cinema_room['room_name'];
-				$data[$key]['price'] = $value->price;
-				$data[$key]['real_price'] = $value->real_price;
-				$data[$key]['cinema_id'] = $value->cinema_id;
-				$data[$key]['id'] = $value->id;
-			}
-			
-			//刪除已經過期的位置
-			
-			
 		} else {
 			$movie = new Movie();
 			$movie_time = new MovieShow();
+			$cinema = new Cinema();
 		}
 		
-		
-		return $this->render('index',['movie'=>$movie,'movie_time'=>$movie_time,'data'=>$data,'cinema_id'=>$id]);
+		return $this->render('index',['movie'=>$movie,'movie_time'=>$movie_time,'cinema'=>$cinema,'cinema_id'=>$id]);
 	}
 	
 	

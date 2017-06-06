@@ -14,7 +14,7 @@ class MovieSeat extends ActiveRecord
 	
 	
 	
-	public static function GetSellSeats($id)
+	public static function GetSellSeats($id,$api=false)
 	{
 		
 		//刪除 已經過期的電影 的位置
@@ -29,13 +29,25 @@ class MovieSeat extends ActiveRecord
 		
 		
 		$seats = self::find()->where('show_id = :show_id',[':show_id'=>$id])->all();
-		
 		$seats_str = "";
-		foreach ($seats as $row){
-			$seats_str .= $row['seat_id']."\",\"";
+		
+		if($api == true){
+			
+			foreach ($seats as $row){
+				$seats_str .= $row['seat_id'].",";
+			}
+			$seats_str = rtrim($seats_str,',""');
+			
+		} else {
+			
+			foreach ($seats as $row){
+				$seats_str .= $row['seat_id']."\",\"";
+			}
+			$seats_str = rtrim($seats_str,',""');
+			
 		}
 		
-		$seats_str = rtrim($seats_str,',""');
+	
 		
 		return $seats_str;
 	}

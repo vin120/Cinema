@@ -40,11 +40,11 @@
 <div class="main container-fluid">
 	<div class="row cinema">
 		<div class="cinema-info">
-			<h3>永樂大戲院</h3>
-			<p>澳門鏡湖馬路85-E</p>
+			<h3><?php echo $cinema['cinema_name']?></h3>
+			<p><?php echo $cinema['cinema_address']?></p>
 		</div>
 		<div class="cinema-tel">
-			<a href="tel:85328311636">
+			<a href="tel:<?php echo $cinema['cinema_phone']?>">
 				<img src="<?php echo $baseUrl?>images/phone.png" alt="phone">
 			</a>
 		</div>
@@ -86,30 +86,6 @@
 		<table>
 			<tbody id="movietime-list">
 			
-			<?php foreach ($data as $row) :?>
-			<tr>
-				<td class="mt-time">
-					<div class="mt-time-wrap">
-						<strong><?php echo explode(':', explode(" ", $row['time_begin'])[1])[0].":".explode(':', explode(" ", $row['time_begin'])[1])[1] ?></strong><em><?php echo explode(':', explode(" ", $row['time_end'])[1])[0].":".explode(':', explode(" ", $row['time_end'])[1])[1]?>結束</em>
-					</div>
-				</td>
-				<td class="mt-info">
-					<div class="mt-lang">
-						<?php echo $row['type_name']?>
-					</div>
-					<div class="mt-place">
-						<?php echo $row['room_name']?>
-					</div>
-				</td>
-				<td class="mt-price">
-					<span class="unit theme-color"><?php echo $row['price']?>MOP</span><span class="origin-price">影院價:<?php echo $row['real_price']?>MOP</span>
-				</td>
-				<td class="mt-buy">
-					<a class="mt-btn" href="<?php echo Url::toRoute(['cinema/seat','id'=>$row['cinema_id'],'movie_id'=>$row['id']]); ?>">購票</a>
-				</td>
-			</tr>
-			<?php endforeach;?>
-			
             </tbody>
         </table>
     </div>
@@ -144,44 +120,52 @@ $(function () {
                     $('.movie-name').text(data.movie_name);
                     $('#score').text(data.score);
                     $('#movei_info').text(data.info);
-                    var arrLen = data.lists.length;
-                    for(var i=0; i<arrLen; i++){
-                        if(i == 0){
-                            result +=  '<li time-id="'+i+'" class="active">'+data.lists[i].time+'</li>';
-                        }else{
-                            result +=  '<li time-id="'+i+'">'+data.lists[i].time+'</li>';
+
+                    if(data.lists.length > 0){
+                        var arrLen = data.lists.length;
+                        for(var i=0; i<arrLen; i++){
+                            if(i == 0){
+                                result +=  '<li time-id="'+i+'" class="active">'+data.lists[i].time+'</li>';
+                            }else{
+                                result +=  '<li time-id="'+i+'">'+data.lists[i].time+'</li>';
+                            }
+
                         }
 
+                        var detailLen = data.lists[0].detail.length;
+                        
+                        for(var i=0; i<detailLen; i++){
+                            time_result +=  '<tr>'
+                                        +'<td class="mt-time">'
+                                        +'<div class="mt-time-wrap">'
+                                        +'<strong>'+data.lists[0].detail[i].start+'</strong><em>'+data.lists[0].detail[i].end+'结束</em>'
+                                        +'</div>'
+                                        +'</td>'
+                                        +'<td class="mt-info">'
+                                        +'<div class="mt-lang">'
+                                        +data.lists[0].detail[i].language
+                                        +'</div>'
+                                        +'<div class="mt-place">'
+                                        +data.lists[0].detail[i].hall
+                                        +'</div>'
+                                        +'</td>'
+                                        +'<td class="mt-price">'
+                                        +'<span class="unit theme-color">'+data.lists[0].detail[i].price+'元</span><span class="origin-price">影院价:'+data.lists[0].detail[i].o_price+'元</span>'
+                                        +'</td>'
+                                        +'<td class="mt-buy">'
+                                        +'<a class="mt-btn" href="<?php echo Url::toRoute('cinema/seat')?>?show_id='+data.lists[0].detail[i].show_id+'">购票</a>'
+                                        +'</td>'
+                                        +'</tr>';
+
+                        }
+
+                        $('#tab').html(result);
+                        $('#movietime-list').html(time_result);
+                    }else{
+                        $('#tab').html("");
+                        $('#movietime-list').html("");
                     }
-
-                    var detailLen = data.lists[0].detail.length;
-                    for(var i=0; i<detailLen; i++){
-                        time_result +=  '<tr>'
-                                    +'<td class="mt-time">'
-                                    +'<div class="mt-time-wrap">'
-                                    +'<strong>'+data.lists[0].detail[i].start+'</strong><em>'+data.lists[0].detail[i].end+'结束</em>'
-                                    +'</div>'
-                                    +'</td>'
-                                    +'<td class="mt-info">'
-                                    +'<div class="mt-lang">'
-                                    +data.lists[0].detail[i].language
-                                    +'</div>'
-                                    +'<div class="mt-place">'
-                                    +data.lists[0].detail[i].hall
-                                    +'</div>'
-                                    +'</td>'
-                                    +'<td class="mt-price">'
-                                    +'<span class="unit theme-color">'+data.lists[0].detail[i].price+'元</span><span class="origin-price">影院价:'+data.lists[0].detail[i].o_price+'元</span>'
-                                    +'</td>'
-                                    +'<td class="mt-buy">'
-                                    +'<a class="mt-btn" href="<?php echo Url::toRoute('cinema/seat')?>?show_id='+data.lists[0].detail[i].show_id+'">购票</a>'
-                                    +'</td>'
-                                    +'</tr>';
-
-                    }
-
-                    $('#tab').html(result);
-                    $('#movietime-list').html(time_result);
+                    
                 }
             });
         },
@@ -195,51 +179,62 @@ $(function () {
                 url: json_url,
                 dataType: 'json',
                 success: function(data){
-					
+                    // console.log(data.lists);
                     var result = '';
                     var time_result = '';
                     time_list = data.lists;
                     $('.movie-name').text(data.movie_name);
                     $('#score').text(data.score);
                     $('#movei_info').text(data.info);
-                    var arrLen = data.lists.length;
-                    for(var i=0; i<arrLen; i++){
-                        if(i == 0){
-                            result +=  '<li time-id="'+i+'" class="active">'+data.lists[i].time+'</li>';
-                        }else{
-                            result +=  '<li time-id="'+i+'">'+data.lists[i].time+'</li>';
+
+                    if(data.lists.length > 0){
+                        
+                        var arrLen = data.lists.length;
+                        for(var i=0; i<arrLen; i++){
+                            if(i == 0){
+                                result +=  '<li time-id="'+i+'" class="active">'+data.lists[i].time+'</li>';
+                            }else{
+                                result +=  '<li time-id="'+i+'">'+data.lists[i].time+'</li>';
+                            }
+
                         }
 
+                        
+                        var detailLen = data.lists[0].detail.length;
+                        for(var i=0; i<detailLen; i++){
+                            time_result +=  '<tr>'
+                                +'<td class="mt-time">'
+                                +'<div class="mt-time-wrap">'
+                                +'<strong>'+data.lists[0].detail[i].start+'</strong><em>'+data.lists[0].detail[i].end+'结束</em>'
+                                +'</div>'
+                                +'</td>'
+                                +'<td class="mt-info">'
+                                +'<div class="mt-lang">'
+                                +data.lists[0].detail[i].language
+                                +'</div>'
+                                +'<div class="mt-place">'
+                                +data.lists[0].detail[i].hall
+                                +'</div>'
+                                +'</td>'
+                                +'<td class="mt-price">'
+                                +'<span class="unit theme-color">'+data.lists[0].detail[i].price+'元</span><span class="origin-price">影院价:'+data.lists[0].detail[i].o_price+'元</span>'
+                                +'</td>'
+                                +'<td class="mt-buy">'
+                                +'<a class="mt-btn" href="<?php echo Url::toRoute('cinema/seat')?>?show_id='+data.lists[0].detail[i].show_id+'">购票</a>'
+                                +'</td>'
+                                +'</tr>';
+
+                        }
+                        
+                        
+
+                        $('#tab').html(result);
+                        $('#movietime-list').html(time_result);
+                    }else{
+                        $('#tab').html("");
+                        $('#movietime-list').html("");
                     }
-
-                    var detailLen = data.lists[0].detail.length;
-                    for(var i=0; i<detailLen; i++){
-                        time_result +=  '<tr>'
-                            +'<td class="mt-time">'
-                            +'<div class="mt-time-wrap">'
-                            +'<strong>'+data.lists[0].detail[i].start+'</strong><em>'+data.lists[0].detail[i].end+'结束</em>'
-                            +'</div>'
-                            +'</td>'
-                            +'<td class="mt-info">'
-                            +'<div class="mt-lang">'
-                            +data.lists[0].detail[i].language
-                            +'</div>'
-                            +'<div class="mt-place">'
-                            +data.lists[0].detail[i].hall
-                            +'</div>'
-                            +'</td>'
-                            +'<td class="mt-price">'
-                            +'<span class="unit theme-color">'+data.lists[0].detail[i].price+'元</span><span class="origin-price">影院价:'+data.lists[0].detail[i].o_price+'元</span>'
-                            +'</td>'
-                            +'<td class="mt-buy">'
-                            +'<a class="mt-btn" href="<?php echo Url::toRoute('cinema/seat')?>?show_id='+data.lists[0].detail[i].show_id+'">购票</a>'
-                            +'</td>'
-                            +'</tr>';
-
-                    }
-
-                    $('#tab').html(result);
-                    $('#movietime-list').html(time_result);
+                    
                 }
             });
         }

@@ -154,6 +154,11 @@
 				<em class="required_tips">*</em>
 			</p>
 			<p>
+				<span>工作时间：</span>
+				<input type="text" name="cinema_work_time" value="<?php echo $cinema_basic['cinema_work_time']?>" />
+				<em class="required_tips">*</em>
+			</p>
+			<p>
 				<span>狀態：</span>
 				<select name="status">
 					<option value="1" <?php echo $cinema_basic['status']==1?"selected='selected'":"" ?>>啓用</option>

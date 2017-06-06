@@ -243,6 +243,8 @@ class OrderController extends Controller
 	
 		$data = MovieOnlineOrder::findOrderDetail($online_order);
 	
+		
+		
 		return $this->render('payment',['data'=>$data]);
 	}
 	
