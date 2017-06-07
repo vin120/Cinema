@@ -51,6 +51,8 @@ class OrderController extends BaseController
 			return $response;
 			Yii::$app->end();
 		}
+		
+		
 		if(empty($movie_id)){
 			$response = ['code' => 5,'msg' => 'movie_id不能爲空'];
 			return $response;
@@ -134,14 +136,91 @@ class OrderController extends BaseController
 	}
 	
 	
-	public function actionPay()
+	/**
+	 *  支付信息
+	 * @return number[]|string[]|number[]|string[]|\frontend\models\unknown[][]
+	 */
+	public function actionPayinfo()
 	{
+		$ssid = Yii::$app->request->post('ssid');
+		$data = [];
+		if(empty($ssid)){
+			$response = ['code' => 2,'msg' => 'ssid不能爲空'];
+			return $response;
+			Yii::$app->end();
+		}
+		
+		$online_order = MovieOnlineOrder::find()->where('order_code = :ssid',[':ssid'=>$ssid])->one();
+		
+		if(is_null($online_order)){
+			$response = ['code' => 3,'msg' => '找不到相關訂單信息'];
+			return $response;
+			Yii::$app->end();
+		}
+		
+		
+		$data['order'] = MovieOnlineOrder::findApiOrderDetail($online_order);
+		
+		//超過15分鐘，訂單超時
+		if(strtotime($online_order->order_time) < time()-900){
+			$response =  ['code' => 4,'msg' => '訂單失效，請重新下單','data'=>$data];
+			return $response;
+			Yii::$app->end();
+		}
+		$response = ['code' => 1,'msg' => '獲取成功','data'=>$data];
+		
+		return $response;
 		
 	}
 	
 	
 	
-	
+	/**
+	 * 支付時，記錄支付記錄
+	 * @return number[]|string[]
+	 */
+	public function actionPaylog()
+	{
+		$ssid = Yii::$app->request->post('ssid');
+		$channel = Yii::$app->request->post("channel");
+		$charge_id = Yii::$app->request->post("charge_id");
+		
+		$data = [];
+		if(empty($ssid)){
+			$response = ['code' => 2,'msg' => 'ssid不能爲空'];
+			return $response;
+			Yii::$app->end();
+		}
+		
+		if(empty($channel)){
+			$response = ['code' => 3,'msg' => '支付渠道channel不能爲空'];
+			return $response;
+			Yii::$app->end();
+		}
+		
+		if(empty($charge_id)){
+			$response = ['code' => 4,'msg' => 'P++的charge_id不能爲空'];
+			return $response;
+			Yii::$app->end();
+		}
+		
+		$online_order = MovieOnlineOrder::find()->where('order_code = :ssid',[':ssid'=>$ssid])->one();
+		
+		if(is_null($online_order)){
+			$response = ['code' => 5,'msg' => '找不到相關訂單信息'];
+			return $response;
+			Yii::$app->end();
+		}
+		
+		$data = MovieOnlineOrder::findApiOrderDetail($online_order);
+			
+		//寫入支付方式
+		MovieOnlineOrder::updateAll(['payment'=>$channel,'charge_id'=>$charge_id,'pay_time'=>date("Y-m-d H:i:s",time())],'order_number = :order_number',[':order_number'=>$data['order_number']]);
+		
+		$response = ['code' => 1,'msg' => '記錄成功'];
+		return $response;
+		
+	}
 	
 	
 	

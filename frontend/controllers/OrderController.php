@@ -276,7 +276,6 @@ class OrderController extends Controller
 			//返回的消息
 			$response = json_decode($ch,true);
 			$id = $response['id'];
-			$paid = $response['paid'];
 			
 			//寫入支付方式
 			MovieOnlineOrder::updateAll(['payment'=>$channel,'charge_id'=>$id,'pay_time'=>date("Y-m-d H:i:s",time())],'order_number = :order_number',[':order_number'=>$data['order_number']]);

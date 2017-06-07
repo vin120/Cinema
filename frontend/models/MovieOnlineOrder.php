@@ -96,4 +96,40 @@ class MovieOnlineOrder extends ActiveRecord
 	}
 	
 	
+	
+	/**
+	 * API 查找訂單信息
+	 * @param unknown $online_order
+	 * @return unknown
+	 */
+	public static function findApiOrderDetail($online_order)
+	{
+		$movie_show = MovieShow::find()->where('id = :id',['id'=>$online_order->movie_show_id])->one();
+		$cinema = Cinema::find()->where('cinema_id = :cinema_id',[':cinema_id'=>$movie_show->cinema_id])->one();
+		$room = Room::find()->where('room_id = :room_id',[':room_id'=>$movie_show->room_id])->one();
+		$movie = Movie::find()->where('movie_id = :movie_id',[':movie_id'=>$movie_show->movie_id])->one();
+		$movie_type = MovieType::find()->where('type_id = :type_id',[':type_id'=>$movie_show->type_id])->one();
+		
+		//拼接時間
+		$date = explode("-", explode(" ", $movie_show->time_begin)[0])[1]."-".explode("-", explode(" ", $movie_show->time_begin)[0])[2] ;
+		$time = explode(":", explode(" ", $movie_show->time_begin)[1])[0].":".explode(":", explode(" ", $movie_show->time_begin)[1])[1] ;
+		
+		$data['seats'] = $online_order->seat_names;
+		$data['phone'] = $online_order->phone;
+		$data['movie_name'] = $movie->movie_name;
+		$data['date'] = $date." ".$time;
+		$data['movie_type'] = $movie_type->type_name;
+		$data['cinema_name'] = $cinema->cinema_name;
+		$data['hall_name'] = $room->room_name;
+		$data['service_price'] = $cinema->service_price;
+		$data['price'] = $online_order->price + $cinema->service_price;
+		$data['total_money'] = $online_order->total_money + $online_order->count * $cinema->service_price;
+		$data['remaining_time'] = date("Y-m-d H:i:s",strtotime($online_order->order_time)+900) ;
+		$data['order_number'] = $online_order->order_number;
+		$data['ssid'] = $online_order->order_code;
+	
+		return $data;
+	}
+	
+	
 }
