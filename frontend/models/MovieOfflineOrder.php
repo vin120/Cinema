@@ -5,11 +5,13 @@ use yii\db\ActiveRecord;
 
 use Yii;
 
-class Cinema extends ActiveRecord
+class MovieOfflineOrder extends ActiveRecord
 {
 	public static function tableName()
 	{
-		return "{{%y_cinema}}";
+		return "{{%y_movie_offline_order}}";
 	}
+	
+	
 	
 }

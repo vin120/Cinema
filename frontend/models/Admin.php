@@ -5,11 +5,11 @@ use yii\db\ActiveRecord;
 
 use Yii;
 
-class Cinema extends ActiveRecord
+class Admin extends ActiveRecord
 {
 	public static function tableName()
 	{
-		return "{{%y_cinema}}";
+		return "{{%y_admin}}";
 	}
 	
 }

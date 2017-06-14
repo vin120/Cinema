@@ -10,6 +10,10 @@ use frontend\models\MovieShow;
 use frontend\models\Cinema;
 use frontend\models\Room;
 use frontend\models\Movie;
+use frontend\models\Admin;
+use frontend\models\MovieOfflineOrder;
+use frontend\models\MovieSeat;
+
 
 class TicketController extends BaseController
 {
@@ -136,6 +140,138 @@ class TicketController extends BaseController
 		}
 		
 		return $response;
+	}
+	
+	
+	/**
+	 * 影院售票系統登錄
+	 * @return number[]|string[]|number[]|string[]|\yii\db\ActiveRecord[]|NULL[]
+	 */
+	public function actionLogin()
+	{
+		$username = Yii::$app->request->post('username');
+		$password = Yii::$app->request->post('password');
+		
+		if(empty($username) || empty($password)){
+			$response = ['code'=> 2,'msg'=>'帳號名和密碼不能爲空'];
+			return $response;
+			Yii::$app->end();
+		}
+		
+		
+		$admin = Admin::find()->select('admin_id,admin_nickname')->where('admin_user=:admin_user and admin_pwd=:admin_pwd',[':admin_user'=>$username,':admin_pwd'=>md5($password)])->one();
+		
+		
+		if(is_null($admin)){
+			$response = ['code'=> 3,'msg'=>'帳號名或密碼錯誤'];
+			return $response;
+			Yii::$app->end();
+		}
+		
+		
+		
+		$data = $admin;
+		
+		$response = ['code'=> 1,'msg'=>'登錄成功','data'=>$data];
+		return $response;
+		
+		
+	}
+	
+	
+	
+	public function actionSellticket()
+	{
+		$admin_id = Yii::$app->request->post('admin_id');
+		
+		$movie_id = Yii::$app->request->post('movie_id');
+		$seats = Yii::$app->request->post('seats');
+		
+		
+		if(empty($movie_id)){
+			$response = ['code' => 2,'msg' => 'movie_id不能爲空'];
+			return $response;
+			Yii::$app->end();
+		}
+		
+		if(empty($seats)){
+			$response = ['code' => 3,'msg' => 'seats不能爲空'];
+			return $response;
+			Yii::$app->end();
+		}
+		
+		
+		if(empty($admin_id)){
+			$response = ['code' => 4,'msg' => 'admin_id不能爲空'];
+			return $response;
+			Yii::$app->end();
+		}
+		
+		
+		$seatArray = explode(",", $seats);
+		$movie_show = MovieShow::find()->where('id = :id',[':id'=>$movie_id])->one();
+		
+		
+		$offline_order = new MovieOfflineOrder();
+		$seat_ids = "";
+		$seat_names = "";
+		
+		
+		$transaction = Yii::$app->db->beginTransaction();
+		try{
+		
+			foreach($seatArray as $row){
+		
+				$movie_seat = MovieSeat::find()->where('seat_id = :seat_id',[':seat_id'=>$row])->one();
+		
+				if(!is_null($movie_seat)){
+					$response = ['code'=> 5,'msg' => "該位置已被預訂"];
+					return $response;
+					Yii::$app->end();
+				}
+		
+				$seat = new MovieSeat();
+				$seat->show_id = $movie_id;
+				$seat->seat_id = $row;
+				$seat->seat_name = explode("_", $row)[0]."排".explode("_", $row)[1]."座";
+				$seat->cur_time = date("Y-m-d H:i:s",time());
+				$seat->status = 2;
+					
+				$seat_ids .= $row.",";
+				$seat_names .= explode("_", $row)[0]."排".explode("_", $row)[1]."座".",";
+					
+				$seat->save();
+			}
+		
+		
+			$offline_order->movie_show_id = $movie_id;
+			
+			$offline_order->seat_ids = rtrim($seat_ids,",");
+			$offline_order->seat_names = rtrim($seat_names,",");
+			$offline_order->order_time = date("Y-m-d H:i:s",time());
+			$offline_order->price = $movie_show->price;
+			$offline_order->count = count($seatArray);
+			$offline_order->total_money = (int)$movie_show->price * (int)count($seatArray);
+			$offline_order->admin_id = $admin_id;
+			
+			$offline_order->status = 1;
+		
+			$offline_order->save();
+		
+			$transaction->commit();
+				
+			$response = ['code'=> 1,'msg'=>'售票成功'];
+		
+				
+		} catch (Exception $e){
+		
+			$transaction->rollBack();
+			$response = ['code'=> 6,'msg' => "出現了未知錯誤"];
+		}
+		
+		
+		return $response;
+		
 	}
 	
 
