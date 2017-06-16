@@ -121,4 +121,26 @@ class UserController extends BaseController
 	}
 	
 	
+	/**
+	 * 獲取驗證碼
+	 * @return number[]|string[]
+	 */
+	public function actionQrcode()
+	{
+		$ssid = Yii::$app->request->post('ssid');
+		
+		if(empty($ssid)){
+			$response = ['code' => 2,'msg' => 'ssid不能爲空'];
+			return $response;
+			Yii::$app->end();
+		}
+		$url = Yii::$app->request->hostInfo."/qrcode/index?ssid=".$ssid;
+		$data['url'] = $url;
+		
+		$response = ['code' => 1,'msg' => '獲取成功','data'=>$data];
+		return $response;
+
+	}
+	
+	
 }

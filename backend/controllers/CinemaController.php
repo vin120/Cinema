@@ -372,6 +372,7 @@ class CinemaController extends BaseController
 			//查找已經「出售」或者 「預訂」 的座位
 			$seats_str = MovieSeat::GetSellSeats($movie_show->id);
 			
+			
 			//查找已經「被禁止 的座位
 			$seats_forbidden = MovieSeat::GetForbiddenSeats($movie_show->id);
 			

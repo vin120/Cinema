@@ -9,7 +9,7 @@ class Admin extends ActiveRecord
 {
 	public static function tableName()
 	{
-		return "{{%y_admin}}";
+		return "{{%y_movie_admin}}";
 	}
 	
 }

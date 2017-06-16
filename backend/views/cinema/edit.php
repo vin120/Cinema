@@ -580,8 +580,6 @@ window.onload = function(){
 
 		    	            		str +='</select>';
 		    	            		str +='</td>';		
-
-		    	            		
 		    	            		str +='<td><input style="width: 40px;" type="text" value="'+data[key]['price']+'" placeholder="價格" name="price[]" maxlength="4" onkeyup="clearNoInt(this)" onblur="clearNoInt(this)" /></td>';
 		    	            		str +='<td><input style="width: 40px;" type="text" value="'+data[key]['real_price']+'" placeholder="影院定價" name="real_price[]" maxlength="4" onkeyup="clearNoInt(this)" onblur="clearNoInt(this)" /></td>';
 		    	            		str +='<td><input type="text" id="s_time'+(key+1)+'" name="s_time[]" placeholder="please choose" value="'+data[key]['time_begin']+'" readonly onfocus="WdatePicker({  dateFmt:\'yyyy-MM-dd HH:mm:ss\',lang:\'en\',maxDate:\'#F{$dp.$D(\\\'e_time'+(key+1)+'\\\')}\'})" class="Wdate" ></input></td>';
@@ -595,6 +593,7 @@ window.onload = function(){
 		    	            		str +='</select>';
 		    	            		str +='</td>';	
 		    	            		str +='<td>';
+		    	            		str +='<a href="<?php echo Url::toRoute(['cinema/seat']);?>?showid='+data[key]['id']+'"><img src="<?php echo $baseUrl; ?>images/text.png"></a>';
 		    	            		str +='<a id="m'+(key+1)+'_'+data[key]['id']+'" class="delete"><img src="<?php echo $baseUrl; ?>images/delete.png"></a>';
 		    	            		str +='</td>';
 		    	            		str +='</tr>';

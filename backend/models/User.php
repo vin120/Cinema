@@ -11,17 +11,34 @@ class User extends ActiveRecord implements IdentityInterface
 {
     const STATUS_DELETED = 0;
     const STATUS_ACTIVE = 10;
+    
+    
+    public $admin_pwd2 = '';
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return '{{%y_admin}}';
+        return '{{%y_movie_admin}}';
     }
+    
+    
+    
+    public function attributeLabels()
+    {
+    	return [
+    			'admin_user' =>Yii::t('app','管理員帳號：'),
+    			'admin_pwd' => Yii::t('app', '管理員密碼：'),
+    			'admin_nickname' => Yii::t('app','管理員姓名：'),
+    	];
+    }
+    
+    
+    
     /**
      * @inheritdoc
      */
-    public function behaviors()
+    public function behaviors_()
     {
         return [
             TimestampBehavior::className(),
@@ -53,8 +70,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public static function findByUsername($username)
     {
-
-        return static::findOne(['admin_user' => $username]);
+        return static::findOne(['admin_user' => $username,'status'=>1,'admin_grade'=>1]);
     }
 
     /**

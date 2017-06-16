@@ -33,7 +33,9 @@ class MovieSeat extends ActiveRecord
 		self::deleteAll('show_id = :show_id and cur_time < :time and status = 1',[':show_id'=>$id,':time'=>date("Y-m-d H:i:s",strtotime('-15 minute'))]);
 		
 		
-		$seats = self::find()->where('show_id = :show_id and status = 1 or status = 2',[':show_id'=>$id])->all();
+		$seats = self::find()->where('show_id = :show_id and (status = 1 or status = 2)',[':show_id'=>$id])->all();
+		
+		
 		
 		$seats_str = "";
 		foreach ($seats as $row){

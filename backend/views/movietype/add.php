@@ -10,7 +10,7 @@
 
 <!-- content start -->
 <div class="r content" id="shoreExcursions_content">
-<div class="topNav"><?php echo yii::t('app','影院管理')?>&nbsp;&gt;&gt;&nbsp;<a href="<?php echo Url::toRoute(['index']);?>"><?php echo yii::t('app','大廳配置')?></a></div>
+<div class="topNav"><?php echo yii::t('app','影院管理')?>&nbsp;&gt;&gt;&nbsp;<a href="<?php echo Url::toRoute(['index']);?>"><?php echo yii::t('app','電影版本配置')?></a></div>
 	<div class="searchResult">
 	<div id="service_write" class=" write">
 	<?php

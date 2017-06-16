@@ -10,7 +10,7 @@
 
 <!-- content start -->
 <div class="r content">
-	<div class="topNav">影院管理&nbsp;&gt;&gt;&nbsp;<a href="#">大廳配置</a></div>
+	<div class="topNav">影院管理&nbsp;&gt;&gt;&nbsp;<a href="#">電影版本配置</a></div>
 	
 	<div class="searchResult">
 		<input type="hidden" id="pag_input" value="<?php echo $pag;?>" />

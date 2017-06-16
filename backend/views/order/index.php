@@ -1,5 +1,5 @@
 <?php
-	$this->title = '訂單管理';
+	$this->title = '線上訂單管理';
 	use backend\views\myasset\PublicAsset;
 	use yii\helpers\Url;
 	use yii\widgets\ActiveForm;
@@ -10,7 +10,7 @@
 
 <!-- content start -->
 <div class="r content">
-	<div class="topNav">訂單管理&nbsp;&gt;&gt;&nbsp;<a href="#">訂單信息</a></div>
+	<div class="topNav">訂單管理&nbsp;&gt;&gt;&nbsp;<a href="#">線上訂單信息</a></div>
 	
 	<div class="searchResult">
 		<input type="hidden" id="pag_input" value="<?php echo $pag;?>" />

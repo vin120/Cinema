@@ -323,6 +323,27 @@ class Helper extends Controller
 		
 		
 		
+		
+		public static function notifyNoPaper($phone,$isreport=0)
+		{
+			$text = '【憶條街】自助售票機缺紙，請及時補充！';
+			$requestData=array(
+					'un'=>Yii::$app->params['uns'],
+					'pw'=>Yii::$app->params['pws'],
+					'sm'=>$text,
+					'da'=>$phone,
+					'rd'=>$isreport,
+					'rf'=>2,
+					'tf'=>3,
+			);
+			$param='un='.Yii::$app->params['uns'].'&pw='.Yii::$app->params['pws'].'&sm='.urlencode($text).'&da='.$phone.'&rd='.$isreport.'&rf=2&tf=3';
+			$url='http://222.73.117.140:8044/mt?'.$param;//单发接口
+			//$url='http://222.73.117.140:8044/batchmt'.'?'.$param;//群发接口
+			return self::_request($url);
+		}
+		
+		
+		
 		/**
 		 * 生成二维码
 		 * @param string $url url连接

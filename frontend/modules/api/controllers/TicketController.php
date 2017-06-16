@@ -13,6 +13,8 @@ use frontend\models\Movie;
 use frontend\models\Admin;
 use frontend\models\MovieOfflineOrder;
 use frontend\models\MovieSeat;
+use frontend\components\Helper;
+
 
 
 class TicketController extends BaseController
@@ -180,6 +182,10 @@ class TicketController extends BaseController
 	
 	
 	
+	/**
+	 * 售票員售票接口
+	 * @return number[]|string[]
+	 */
 	public function actionSellticket()
 	{
 		$admin_id = Yii::$app->request->post('admin_id');
@@ -245,7 +251,6 @@ class TicketController extends BaseController
 		
 		
 			$offline_order->movie_show_id = $movie_id;
-			
 			$offline_order->seat_ids = rtrim($seat_ids,",");
 			$offline_order->seat_names = rtrim($seat_names,",");
 			$offline_order->order_time = date("Y-m-d H:i:s",time());
@@ -272,6 +277,22 @@ class TicketController extends BaseController
 		
 		return $response;
 		
+	}
+	
+	
+	
+	
+	/**
+	 * 自助售票機沒紙的時候「短信」通知管理員
+	 * @return number[]|string[]
+	 */
+	public function actionNotify()
+	{
+		$phone = "65430594";
+		$phones = "853".$phone;
+		$ch = Helper::notifyNoPaper($phones);
+		$response = ['code'=> 1,'msg' => "提示管理員補充紙張"];
+		return $response;
 	}
 	
 
