@@ -34,9 +34,18 @@
 					<td><?php echo $value['phone']?></td>
 					<td><?php echo $value['count']?></td>
 					<td><?php echo $value['order_time']?></td>
-					<td><?php echo $value['status']==1 ? "<div style='color:green'>已支付</div>" : ($value['status'] == 2 ? "<div style='color:red'>已過期</div>" :"<div style='color:red'>未支付</div>")?></td>
+					<td><?php if($value['status'] == 1){
+								echo "<div style='color:green'>已支付</div>";
+							  }else if($value['status'] == 2){
+							  	echo "<div style='color:red'>已過期</div>";
+							  }else if($value['status'] ==3){
+							  	echo "<div style='color:green'>已取票</div>";
+							  }else {
+							  	echo "<div style='color:red'>未支付</div>";
+							  }
+					?></td>
 					<td>
-						<?php if ($value['status'] == 1):?>
+						<?php if (($value['status'] == 1) || ($value['status'] == 3)):?>
 						<a href="<?php echo Url::toRoute(['order/detail','id'=>$value['id']]);?>"><img src="<?php echo $baseUrl; ?>images/text.png"></a>
 						<?php endif;?>
 					</td>
@@ -88,7 +97,16 @@ window.onload = function(){
 								str += '<td>'+data[key]['phone']+'</td>';
 								str += '<td>'+data[key]['count']+'</td>';
 								str += '<td>'+data[key]['order_time']+'</td>';
-								var order_status = data[key]['status'] == 1 ? "<div style='color:green'>已支付</div>" : (data[key]['status'] == 2 ? "<div style='color:red'>已過期</div>" : "<div style='color:red'>未支付</div>");
+// 								var order_status = data[key]['status'] == 1 ? "<div style='color:green'>已支付</div>" : (data[key]['status'] == 2 ? "<div style='color:red'>已過期</div>" : "<div style='color:red'>未支付</div>");
+								var order_status = '';
+								if(data[key]['status'] == 1)
+									order_status = "<div style='color:green'>已支付</div>";
+								else if(data[key]['status'] == 2) 
+									order_status = "<div style='color:red'>已過期</div>";
+								else if	(data[key]['status'] == 3) 
+									order_status = "<div style='color:green'>已取票</div>";
+								else
+									order_status = "<div style='color:red'>未支付</div>";
 								str += '<td>'+order_status+'</td>';								
 								str += '<td>';
 								if(data[key]['status']==1) {

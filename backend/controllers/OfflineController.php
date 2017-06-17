@@ -55,7 +55,7 @@ class OfflineController extends BaseController
 			}
 			
 			if(!empty($end_time)){
-				$e_time = $end_time." 59:59:59";
+				$e_time = $end_time." 23:59:59";
 				$sql->andWhere('order_time < :end_time',[':end_time'=>$e_time]);
 			}
 			
@@ -85,7 +85,7 @@ class OfflineController extends BaseController
 			}
 		}
 		
-		$offline_order = $sql->all();
+		$offline_order = $sql->orderBy('id desc')->all();
 		
 		$total_money = 0;
 		
@@ -172,7 +172,7 @@ class OfflineController extends BaseController
 		}
 			
 		if(!empty($end_time)){
-			$e_time = $end_time." 59:59:59";
+			$e_time = $end_time." 23:59:59";
 			$sql->andWhere('order_time < :end_time',[':end_time'=>$e_time]);
 		}
 			
@@ -203,7 +203,7 @@ class OfflineController extends BaseController
 		
 		
 		
-		$offline_order = $sql->all();
+		$offline_order = $sql->orderBy('id desc')->all();
 		
 		$total_money = 0;
 		

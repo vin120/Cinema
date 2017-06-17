@@ -235,27 +235,28 @@ class User extends ActiveRecord implements IdentityInterface
 		
 		//使用session記錄手機號碼
 		Yii::$app->session->set('regist_phone',$this->user_phone);
+		$c_code = Helper::get_rand_number('100000','999999',1)[0];
 		
-		
-		if(time() < $code->c_time - 240 ){
-			Yii::$app->session->setFlash('info', '請一分鐘後再次獲取驗證碼');
-		} else {
+		if(!is_null($code)){
 			
-			$c_code = Helper::get_rand_number('100000','999999',1)[0];
+			if(time() < $code->c_time - 240 ){
+				Yii::$app->session->setFlash('info', '請一分鐘後再次獲取驗證碼');
+				
+			} 
+		}else{
 			
 			if($this->area == '86'){
 				$ch = Helper::sendMSN($this->user_phone, $c_code);
-					
+			
 			} else {
-					
+			
 				$phones = $this->area.$this->user_phone;
 				$ch = Helper::sendInternational($phones, $c_code);
 			}
-			
-			//保存驗證碼到數據庫中
-			Code::saveCode($this->user_phone,$c_code);
-			
 		}
+		
+		//保存驗證碼到數據庫中
+		Code::saveCode($this->user_phone,$c_code);
 		
 	}
 	
