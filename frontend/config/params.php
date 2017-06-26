@@ -35,4 +35,11 @@ return [
 		
 	// ==============支付路徑==============
 	'pay_url' => 'http://movie.macaoyi.com/order/p_pay',
+		
+	'pay_success_url' => 'http://movie.macaoyi.com/order/success',
+	'pay_cancel_url'=> 'http://movie.macaoyi.com/order/cancel',
+		
+		
+	//自助取票機沒紙，通知這個手機號碼
+	'notify_phone'=>"65430594",
 ];

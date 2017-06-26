@@ -288,7 +288,7 @@ class TicketController extends BaseController
 	 */
 	public function actionNotify()
 	{
-		$phone = "65430594";
+		$phone = Yii::$app->params['notify_phone'];
 		$phones = "853".$phone;
 		$ch = Helper::notifyNoPaper($phones);
 		$response = ['code'=> 1,'msg' => "提示管理員補充紙張"];

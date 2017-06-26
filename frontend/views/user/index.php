@@ -49,5 +49,8 @@
 				</div>
 			</a>
 		</div>
+		<div class="col-xs-12">
+		    <a id="out_login" class="btn btn-default center-block" style="width:100%;margin-top:50px;" href="<?php echo Url::to('/user/logout')?>">退出登陸</a >
+		</div>
 	</div>
 </div>

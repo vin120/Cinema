@@ -57,6 +57,7 @@
 			<div class="front">屏幕(<?php echo $data['room_name']?>)</div>
 		</div>
 	</div>
+	
 	<div class="booking-info">
 		<div class="booking-details">
 			<p>已選座位</p>

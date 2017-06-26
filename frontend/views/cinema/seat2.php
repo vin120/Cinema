@@ -11,7 +11,7 @@
 ?>
 
 
-<header class="navbar navbar-default navbar-fixed-top">
+<header class="navbar navbar-default navbar-fixed-top" style="width: 100%; ">
 <div class="container">
 	<div class="row">
 		<div class="col-xs-2">

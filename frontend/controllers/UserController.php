@@ -48,6 +48,8 @@ class UserController extends Controller
 	{
 		Yii::$app->user->logout();
 		Yii::$app->session->destroy();
+		
+		$this->redirect('/user/login');
 	}
 	
 	

@@ -517,8 +517,8 @@ class Helper extends Controller
 					
 					$extra = array(
 					// success_url 和 cancel_url 在本地测试不要写 localhost ，请写 127.0.0.1。URL 后面不要加自定义参数
-					'success_url' => 'http://movie.macaoyi.com/order/success',
-					'cancel_url' => 'http://movie.macaoyi.com/order/cancel'
+					'success_url' => Yii::$app->params['pay_success_url'],
+					'cancel_url' => Yii::$app->params['pay_cancel_url'],
 					);
 					break;
 				case 'bfb_wap':
