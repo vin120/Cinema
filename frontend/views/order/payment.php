@@ -39,17 +39,27 @@
 			<p>支付剩余時間：<span id="time"></span></p>
 		</div>
 
-		<div class="col-xs-12 pay-way">
-			<img src="<?php echo $baseUrl?>images/alipay_g2.png"/>
-			<div class="way-text">
-				<h3>支付寶支付</h3>
-				<span>推薦有支付寶賬戶的用戶使用</span>
+	
+		<?php 
+			$cookies = Yii::$app->request->cookies;
+			if(!isset($cookies['wx_code'])):
+		?>
+			<div class="col-xs-12 pay-way">
+				<img src="<?php echo $baseUrl?>images/alipay_g2.png"/>
+				<div class="way-text">
+					<h3>支付寶支付</h3>
+					<span>推薦有支付寶賬戶的用戶使用</span>
+				</div>
+				<div class="icheckbox">
+					<input value="1" type="radio" name="square-radio" checked>
+				</div>
 			</div>
-			<div class="icheckbox">
-				<input value="1" type="radio" name="square-radio" checked>
-			</div>
-		</div>
-        
+		<?php endif;?>
+		
+        <?php 
+			$cookies = Yii::$app->request->cookies;
+			if(isset($cookies['wx_code'])):
+		?>
 		<div class="col-xs-12 pay-way">
 			<img src="<?php echo $baseUrl?>images/weixin_g2.png"/>
 			<div class="way-text">
@@ -57,10 +67,12 @@
 				<span>推薦安裝微信6.0及以上版本的用戶使用</span>
 			</div>
 			<div class="icheckbox">
-				<input value="2" type="radio" name="square-radio">
+				<input value="2" type="radio" name="square-radio" checked>
 			</div>
 		</div>
-
+		<?php endif;?>
+		
+		
 		<div class="col-xs-12 pay-way" style="margin-top:0px;">
 			<img src="<?php echo $baseUrl?>images/bank_g2.png"/>
 			<div class="way-text">
@@ -70,7 +82,7 @@
 			<div class="icheckbox">
 				<input value="3" type="radio" name="square-radio">
 			</div>
-		</div>   
+		</div>
 	</div>
 
 	<div class="pay-btn">
@@ -92,6 +104,7 @@
 <?php $this->beginBlock('js_end') ?>
 
 $(function() {
+
 
 	var now = "<?php echo $data['order_time']?>";
 
@@ -124,11 +137,10 @@ $('#time').countdown(now).on('update.countdown', function(event){
 
 	$("#pay").click(function(){
 		var pay_way = $("input[type='radio']:checked").val();
-        
 		if(pay_way == 1){
 			wap_pay(1) 
 		}else if(pay_way == 2){
-			wap_pay(2) 
+			wap_pay(2)
 		}else if(pay_way == 3){
 			wap_pay(3) 
 		}
@@ -139,7 +151,7 @@ $('#time').countdown(now).on('update.countdown', function(event){
 	});
 
 	
-	var url = "<?php echo Yii::$app->params['pay_url'];?>";
+	var url = "<?php echo Yii::$app->request->getHostInfo().'/'.Yii::$app->params['pay_url'];?>";
 
 	var _csrf = '<?php echo Yii::$app->request->csrfToken?>';
 	   
@@ -151,7 +163,6 @@ $('#time').countdown(now).on('update.countdown', function(event){
         }
 
         var ssid = "<?php echo $data['order_code']?>";
-
         
         var xhr = new XMLHttpRequest();
         xhr.open("POST", url, true);
@@ -166,12 +177,20 @@ $('#time').countdown(now).on('update.countdown', function(event){
                     console.log(result);
                     console.log(err.msg);
                     console.log(err.extra);
+                    if (result == "success") {
+                        // 只有微信公众账号 wx_pub 支付成功的结果会在这里返回，其他的支付结果都会跳转到 extra 中对应的 URL。
+                    	window.location.href = "<?php echo Url::to('/order/success')?>";
+                    } else if (result == "fail") {
+                        // charge 不正确或者微信公众账号支付失败时会在此处返回
+                    	window.location.href = "<?php echo Url::to('/order/cancel')?>";
+                    } else if (result == "cancel") {
+                        // 微信公众账号支付取消支付
+                    	window.location.href = "<?php echo Url::to('/order/cancel')?>";
+                    }
                 });
             }
         }
     }
-
-	
 });
 
 <?php $this->endBlock() ?>

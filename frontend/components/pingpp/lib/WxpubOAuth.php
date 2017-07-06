@@ -35,14 +35,14 @@ class WxpubOAuth
      *                        TRUE 弹出授权页面,这个可以通过 openid 拿到昵称、性别、所在地，
      * @return string 用于获取授权code的URL地址
      */
-    public static function createOauthUrlForCode($app_id, $redirect_url, $more_info = false)
+    public static function createOauthUrlForCode($app_id, $redirect_url,$status, $more_info = false)
     {
         $urlObj = array();
         $urlObj['appid'] = $app_id;
         $urlObj['redirect_uri'] = $redirect_url;
         $urlObj['response_type'] = 'code';
         $urlObj['scope'] = $more_info ? 'snsapi_userinfo' : 'snsapi_base';
-        $urlObj['state'] = 'STATE' . '#wechat_redirect';
+        $urlObj['state'] = $status;
         $queryStr = http_build_query($urlObj);
 
         return 'https://open.weixin.qq.com/connect/oauth2/authorize?' . $queryStr;
@@ -54,6 +54,16 @@ class WxpubOAuth
      * @param $app_secret 微信公众号应用密钥（注意保密）
      * @param $code 授权code, 通过调用WxpubOAuth::createOauthUrlForCode来获取
      * @return string 获取openid的URL地址
+     * 
+     * 返回
+     * { "access_token":"ACCESS_TOKEN",    
+		 "expires_in":7200,    
+		 "refresh_token":"REFRESH_TOKEN",    
+		 "openid":"OPENID",    
+		 "scope":"SCOPE" 
+		} 
+     * 
+     * 
      */
     private static function _createOauthUrlForOpenid($app_id, $app_secret, $code)
     {

@@ -228,7 +228,7 @@ class TicketController extends BaseController
 		
 			foreach($seatArray as $row){
 		
-				$movie_seat = MovieSeat::find()->where('seat_id = :seat_id',[':seat_id'=>$row])->one();
+				$movie_seat = MovieSeat::find()->where('seat_id = :seat_id and show_id = :show_id',[':seat_id'=>$row,':show_id'=>$movie_id])->one();
 		
 				if(!is_null($movie_seat)){
 					$response = ['code'=> 5,'msg' => "該位置已被預訂"];

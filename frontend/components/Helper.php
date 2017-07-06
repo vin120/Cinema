@@ -5,6 +5,7 @@ namespace frontend\components;
 use Yii;
 use yii\web\Controller;
 use frontend\models\MovieOnlineOrder;
+use Pingpp\WxpubOAuth;
 
 
 
@@ -297,6 +298,7 @@ class Helper extends Controller
 			return $result;
 		}
 		
+	
 		
 		/**
 		 * 国际短信发送
@@ -501,7 +503,6 @@ class Helper extends Controller
 			$api_key = Yii::$app->params['API_KEY'];
 			$app_id = Yii::$app->params['PAPP_ID'];
 			
-			
 			//引入你的签名私钥
 			$path = dirname(dirname(__FILE__)).'/components/pingpp/rsa_private_key.pem';
 			\Pingpp\Pingpp::setPrivateKeyPath($path);
@@ -510,15 +511,12 @@ class Helper extends Controller
 			//$extra用于设置支付渠道所需的额外参数，额外参数多数是可选，请根据需求来决定。详情看参考文档
 			$extra = [];
 			
-			
-			
 			switch ($channel) {
 				case 'alipay_wap':
-					
 					$extra = array(
-					// success_url 和 cancel_url 在本地测试不要写 localhost ，请写 127.0.0.1。URL 后面不要加自定义参数
-					'success_url' => Yii::$app->params['pay_success_url'],
-					'cancel_url' => Yii::$app->params['pay_cancel_url'],
+						// success_url 和 cancel_url 在本地测试不要写 localhost ，请写 127.0.0.1。URL 后面不要加自定义参数
+						'success_url' =>Yii::$app->request->getHostInfo().'/'. Yii::$app->params['pay_success_url'],
+						'cancel_url' => Yii::$app->request->getHostInfo().'/'.Yii::$app->params['pay_cancel_url'],
 					);
 					break;
 				case 'bfb_wap':
@@ -533,8 +531,18 @@ class Helper extends Controller
 					);
 					break;
 				case 'wx_pub':
+					
+					$wx_code = $_COOKIE['wx_code'];
+					
+					$cookies = Yii::$app->request->cookies;
+					
+					$wx_code = $cookies->getValue('wx_code');
+					
+					$wx_app_id = Yii::$app->params['wx_app_id'];
+					$wx_app_secret = Yii::$app->params['wx_app_secret'];
+					$open_id = WxpubOAuth::getOpenid($wx_app_id, $wx_app_secret, $wx_code);
 					$extra = array(
-					'open_id' => 'openidxxxxxxxxxxxx'// 用户在商户微信公众号下的唯一标识，获取方式可参考 pingpp-php/lib/WxpubOAuth.php
+						'open_id' => $open_id// 用户在商户微信公众号下的唯一标识，获取方式可参考 pingpp-php/lib/WxpubOAuth.php
 					);
 					break;
 				case 'wx_pub_qr':
@@ -752,6 +760,34 @@ class Helper extends Controller
 		}
 		
 		
-		
+		/**
+		 * 获取微信code的重定向前的url
+		 * @param unknown $ssid
+		 * @return string
+		 */
+		public static function GetWxCodeUrl($ssid)
+		{
+			$redirect_url = Yii::$app->params['redirect_url'];
+			$wx_app_id = Yii::$app->params['wx_app_id'];
+			$wx_app_secret = Yii::$app->params['wx_app_secret'];
 			
+			$code_url = WxpubOAuth::createOauthUrlForCode($wx_app_id, $redirect_url,$ssid);
+			
+			return $code_url;
+		}
+			
+		
+		/**
+		 * 判断是否微信打开
+		 * @return boolean
+		 */
+		public static function isWechatBrowser()
+		{
+			if (strpos($_SERVER['HTTP_USER_AGENT'],'MicroMessenger') !== false ) {
+				return true;
+			}
+			
+			return false;
+		}
+		
 }

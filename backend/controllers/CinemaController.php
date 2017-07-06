@@ -75,7 +75,7 @@ class CinemaController extends BaseController
 		$db = Yii::$app->db;
 		
 		// if($table == 1)
-		$sql = "SELECT * FROM `y_cinema` WHERE cinema_id='{$id}'AND status=1 ";
+		$sql = "SELECT * FROM `y_cinema` WHERE cinema_id='{$id}' ";
 		$cinema_basic = $db->createCommand($sql)->queryOne();
 		
 		

@@ -5,14 +5,10 @@ namespace frontend\controllers;
 use yii\web\Controller;
 use frontend\components\Helper;
 use Yii;
-use frontend\models\MovieOrder;
 use frontend\models\MovieSeat;
 use frontend\models\MovieOnlineOrder;
 use frontend\models\MovieShow;
-use frontend\models\Cinema;
-use frontend\models\Room;
-use frontend\models\MovieType;
-use frontend\models\Movie;
+
 
 
 
@@ -54,8 +50,7 @@ class OrderController extends Controller
 					
 					foreach($seatArray as $row){
 						
-						$movie_seat = MovieSeat::find()->where('seat_id = :seat_id',[':seat_id'=>$row])->one();
-						
+						$movie_seat = MovieSeat::find()->where('seat_id = :seat_id and id = :id',[':seat_id'=>$row,':id'=>$movie_id])->one();
 						if(!is_null($movie_seat)){
 							$response = ['code'=> 4,'msg' => "該位置已被預訂"];
 							echo json_encode($response);
@@ -254,9 +249,11 @@ class OrderController extends Controller
 	 */
 	public function actionP_pay()
 	{
+		
 		if(Yii::$app->request->isPost){
 			$ssid = Yii::$app->request->post("ssid");
 			$channel = Yii::$app->request->post("channel");
+			
 			
 			$online_order = MovieOnlineOrder::find()->where('order_code = :ssid',[':ssid'=>$ssid])->one();
 			$data = MovieOnlineOrder::findOrderDetail($online_order);
@@ -264,6 +261,8 @@ class OrderController extends Controller
 			
 			if($channel == 1){
 				$channel = "alipay_wap";
+			} else if($channel == 2) {
+				$channel = "wx_pub";
 			}
 			
 			//汇率
@@ -284,22 +283,76 @@ class OrderController extends Controller
 		}
 	}
 		
-	
+	/**
+	 * alipay支付成功后的跳转页面
+	 * @return string
+	 */
 	public function actionSuccess()
 	{
-		
-		$get = Yii::$app->request->get();
-		$order_number = $get['out_trade_no'];
-		
-		
 		return $this->render("success");
 	}
 	
-	
+	/**
+	 * alipay取消支付后的跳转页面
+	 * @return string
+	 */
 	public function actionCancel()
 	{
-		
 		return $this->render('cancel');
 	}
+	
+
+	
+	/**
+	 * 判断是否在微信客户端打开链接
+	 * 如果是就跳转到微信code的重定向url地址
+	 * 如果不是就跳到支付宝支付界面
+	 */
+	public function actionGetcode()
+	{
+		$ssid = Yii::$app->request->get('ssid');
+		$url = Helper::GetWxCodeUrl($ssid);
+		
+		$isWechat = helper::isWechatBrowser();
+		
+		if($isWechat){
+			header("Location: $url");
+			exit();
+		} else {
+			$this->redirect(['order/payment','ssid'=>$ssid]);
+		}
+	}
+	
+	
+	/**
+	 * 通过微信重定向url获取code，
+	 * 并且把code设置为cookie
+	 */
+	public function actionGetwxcode()
+	{
+		$code = Yii::$app->request->get('code');
+		$ssid = Yii::$app->request->get('state');
+	
+		
+		if(!empty($code)){
+			$cookies = Yii::$app->response->cookies;
+			$cookies->add(new \yii\web\Cookie([
+					'name' => 'wx_code',
+					'value' => $code,
+					'expire'=>time()+3600,
+			]));
+		}
+		
+		$this->redirect(['/order/payment','ssid'=>$ssid]);
+	
+	}
+	
+	
+	
+	
+	// 	public function actionResult()
+	// 	{
+	// 		return $this->render('result');
+	// 	}
 	
 }

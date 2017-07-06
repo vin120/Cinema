@@ -21,4 +21,13 @@ class QrcodeController extends Controller
 		return Helper::qrcode($ssid);
 	}
 	
+	public function actionCode()
+	{
+		if (isset($_GET['code'])){
+			echo $_GET['code'];
+		}else{
+			echo "NO CODE";
+		}
+	}
+	
 }

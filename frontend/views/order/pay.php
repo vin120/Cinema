@@ -97,7 +97,7 @@ $('#time').countdown(now).on('update.countdown', function(event){
 
 
 $("button").click(function(){
-	window.location.href = "<?php echo Url::to(['/order/payment']);?>?ssid=<?php echo $data['order_code']?>";
+	window.location.href = "<?php echo Url::to(['/order/getcode']);?>?ssid=<?php echo $data['order_code']?>";
 })
 
 
