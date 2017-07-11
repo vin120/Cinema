@@ -96,12 +96,20 @@ class UserController extends Controller
 		if(Yii::$app->request->isPost){
 			$post = Yii::$app->request->post();
 			
+			
+			
+			
 			if($model->verifyPhone($post)){
 				$this->redirect('/user/verify');
 			}
 		}
 		
-		return $this->render('regist',['model'=>$model]);
+		$area = [
+			853 =>	Yii::t('app','澳門,+853'),
+			86 =>	Yii::t('app','中國大陸,+86'),
+		];
+		
+		return $this->render('regist',['model'=>$model,'area'=>$area]);
 		
 	}
 	
@@ -116,14 +124,18 @@ class UserController extends Controller
 		
 		if(Yii::$app->request->isPost){
 			$post = Yii::$app->request->post();
-				
 			if($model->verifyPhonefindme($post)){
-		
 				$this->redirect('/user/verify');
 			}
 		}
 		
-		return $this->render('findme',['model'=>$model]);
+		
+		$area = [
+			853 =>	Yii::t('app','澳門,+853'),
+			86 =>	Yii::t('app','中國大陸,+86'),
+		];
+		
+		return $this->render('findme',['model'=>$model,'area'=>$area]);
 	}
 	
 	
@@ -184,7 +196,7 @@ class UserController extends Controller
 			$post = Yii::$app->request->post();
 			
 			if($model->verityPassword($post)){
-				$this->redirect('/user/index');
+				$this->redirect('/index/index');
 			}
 		}
 		

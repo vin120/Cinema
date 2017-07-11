@@ -284,7 +284,7 @@ class OrderController extends Controller
 	}
 		
 	/**
-	 * alipay支付成功后的跳转页面
+	 * 支付成功后的跳转页面
 	 * @return string
 	 */
 	public function actionSuccess()
@@ -293,7 +293,7 @@ class OrderController extends Controller
 	}
 	
 	/**
-	 * alipay取消支付后的跳转页面
+	 * 取消支付后的跳转页面
 	 * @return string
 	 */
 	public function actionCancel()

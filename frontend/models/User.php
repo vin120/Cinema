@@ -49,6 +49,10 @@ class User extends ActiveRecord implements IdentityInterface
 	public function validatePass()
 	{
 		if(!$this->hasErrors()){
+			$res = self::find()->where('user_phone = :user_phone ',[':user_phone' =>$this->user_phone])->one();
+			if(is_null($res)) {
+				$this->addError("user_password","該手機號碼尚未註冊");
+			}
 			$data = self::find()->where('user_phone = :user_phone and user_password = :user_password',[':user_phone' =>$this->user_phone ,':user_password'=>md5($this->user_password)])->one();
 			if(is_null($data)){
 				$this->addError("user_password","用戶名或密碼錯誤");
@@ -140,6 +144,7 @@ class User extends ActiveRecord implements IdentityInterface
 	public function verifyPhone($data)
 	{
 		$this->scenario = "verifyphone";
+	
 		if($this->load($data) && $this->validate()){
 			//發送手機驗證碼
 			$this->sendMsn();
@@ -157,6 +162,7 @@ class User extends ActiveRecord implements IdentityInterface
 	public function verifyPhonefindme($data)
 	{
 		$this->scenario = "verifyphonefindme";
+		
 		if($this->load($data) && $this->validate()){
 			//發送手機驗證碼
 			$this->sendMsn();
@@ -241,23 +247,28 @@ class User extends ActiveRecord implements IdentityInterface
 			
 			if(time() < $code->c_time - 240 ){
 				Yii::$app->session->setFlash('info', '請一分鐘後再次獲取驗證碼');
+			} else {
+				if($this->area == '86'){
+					$ch = Helper::sendMSN($this->user_phone, $c_code);
+				} else {
+					$phones = $this->area.$this->user_phone;
+					$ch = Helper::sendInternational($phones, $c_code);
+				}
 				
-			} 
-		}else{
-			
+				//保存驗證碼到數據庫中
+				Code::saveCode($this->user_phone,$c_code);
+			}
+		} else {
 			if($this->area == '86'){
 				$ch = Helper::sendMSN($this->user_phone, $c_code);
-			
 			} else {
-			
 				$phones = $this->area.$this->user_phone;
 				$ch = Helper::sendInternational($phones, $c_code);
 			}
+			
+			//保存驗證碼到數據庫中
+			Code::saveCode($this->user_phone,$c_code);
 		}
-		
-		//保存驗證碼到數據庫中
-		Code::saveCode($this->user_phone,$c_code);
-		
 	}
 	
 

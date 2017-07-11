@@ -82,11 +82,13 @@ $(function() {
 									status = '<a href="<a href="<?php echo Url::to('/order/pay');?>?ssid='+data.lists[i].ssid+'" class="line-btn order-status status-f a_none">付款</a>';
 									break;
 								case 1:
-									status = '<span class="order-status">已完成</span>';
+									status = '<span class="order-status">待取票</span>';
 									break;
 								case 2:
 									status = '<span class="order-status status-f">已失效</span>';
 									break;
+								case 3:
+									status = '<span class="order-status status-f" style="color:green">已取票</span>';
 								
 								}
 								result += '<div class="col-xs-12 order-wrap"><a class="a_none" href="<?php echo Url::to(['/cinema/index']);?>?id='+data.lists[i].cinema_id+'"><div class="order-cinema"><span>' + data.lists[i].cinema_name + '</span><div class="order-more"><i class="fa fa-angle-right"></i></div></div></a><div class="bottom-line"></div><a class="a_none" href="<?php echo Url::toRoute(['/order/orderdetail']);?>?ssid='+data.lists[i].ssid+'"><div class="order-info"><div class="movie-img"><img src="<?php echo Yii::$app->params['img_url'];?>/' + data.lists[i].pic + '"/></div><div class="movie-info"><h4>' + data.lists[i].movie_name + data.lists[i].counts + "</h4><p>" + data.lists[i].date + "</p><p>" + data.lists[i].hall + "  " + data.lists[i].seats + '</p></div></div></a><div class="bottom-line"></div><div class="order-price"><p>總價：<span>' + data.lists[i].price + "</span> MOP</p>" + status + "</div></div>"
@@ -147,11 +149,13 @@ $(function() {
 									status = '<a href="<?php echo Url::to('/order/pay');?>?ssid='+data.lists[i].ssid+'" class="line-btn order-status status-f a_none">付款</a>';
 									break;
 								case 1:
-									status = '<span class="order-status">已完成</span>';
+									status = '<span class="order-status">待取票</span>';
 									break;
 								case 2:
 									status = '<span class="order-status status-f">已失效</span>';
 									break;
+								case 3:
+									status = '<span class="order-status status-f" style="color:green">已取票</span>';
 								
 								}
 								result += '<div class="col-xs-12 order-wrap"><a class="a_none" href="<?php echo Url::to(['/cinema/index']);?>?id='+data.lists[i].cinema_id+'"><div class="order-cinema"><span>' + data.lists[i].cinema_name + '</span><div class="order-more"><i class="fa fa-angle-right"></i></div></div></a><div class="bottom-line"></div><a class="a_none" href="<?php echo Url::toRoute(['/order/orderdetail']);?>?ssid='+data.lists[i].ssid+'"><div class="order-info"><div class="movie-img"><img src="<?php echo Yii::$app->params['img_url'];?>/' + data.lists[i].pic + '"/></div><div class="movie-info"><h4>' + data.lists[i].movie_name + data.lists[i].counts + "</h4><p>" + data.lists[i].date + "</p><p>" + data.lists[i].hall + "  " + data.lists[i].seats + '</p></div></div></a><div class="bottom-line"></div><div class="order-price"><p>總價：<span>' + data.lists[i].price + "</span> MOP</p>" + status + "</div></div>"

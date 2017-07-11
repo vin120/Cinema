@@ -38,7 +38,9 @@
 					<span>
 						<?php if($data['status'] == 0): ?>
 							<a href="<?php echo Url::to(['/order/pay','ssid'=>$data['order_code']])?>" class="line-btn movie-pay a_none">付款</a>
-						<?php elseif ($data['status'] == 1) : echo "已完成";?>
+						<?php elseif ($data['status'] == 1) : echo "待取票";?>
+						<?php elseif ($data['status'] == 2) : echo "已失效";?>
+						<?php elseif ($data['status'] == 3) : echo "<p style='color:green'>已取票</p>";?>
 						<?php endif;?>
 					</span>
 				</div>

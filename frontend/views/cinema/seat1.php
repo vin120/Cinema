@@ -139,7 +139,13 @@ $(function() {
 						alert("一次最多購買4張");
 						return "available"
 					} else {
-						$("<li>" + (this.settings.row + 1) + "行" + this.settings.label + "座</li>").attr("id", "cart-item-" + this.settings.id).data("seatId", this.settings.id).appendTo(d);
+						$('<li style="cursor:pointer">'+(this.settings.row+1)+'行'+this.settings.label+'座<i class="fa fa-close" style="float:right;line-height:26px;margin-right:5px;"></i></li>')
+                        .attr('id', 'cart-item-'+this.settings.id)
+                        .attr('seat_id', this.settings.id)
+                        .data('seatId', this.settings.id)
+                        .appendTo(d);
+                        
+// 						$("<li>" + (this.settings.row + 1) + "行" + this.settings.label + "座</li>").attr("id", "cart-item-" + this.settings.id).data("seatId", this.settings.id).appendTo(d);
 						f.text(e.find("selected").length + 1);
 						c.text(b(e) + a);
 						
@@ -171,6 +177,14 @@ $(function() {
 		});
 
 		e.get(["<?php echo $seats_str;?>"]).status("unavailable")
+		$(document).on('click','#selected-seats li',function(){
+            //更新数量
+            f.text(e.find("selected").length - 1);
+			c.text(b(e) - a);
+            e.get([$(this).attr("seat_id")]).status('available');
+            //删除已预订座位
+            $(this).remove();            
+        });
 	});
 	
 	function b(d) {

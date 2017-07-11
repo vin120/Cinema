@@ -51,7 +51,7 @@
 		?>
 		
 		<div class="col-xs-12 phone-wrap">
-			<?php echo $form->field($model,'area')->textInput(["class"=>"","id"=>"#","placeholder"=> Yii::t('app', '請輸入區號，澳門:853,中國大陸:86')])?>
+			<?php echo $form->field($model,'area')->dropDownList($area,["class"=>"form-control","style"=>"margin-top:10px"])?>
 			<?php echo $form->field($model,'user_phone')->textInput(["class"=>"","id"=>"#","placeholder"=> Yii::t('app', '請輸入您的手機號')])?>
 		</div>
 

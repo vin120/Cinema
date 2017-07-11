@@ -606,6 +606,57 @@ class Helper extends Controller
 		}
 		
 		
+		
+		/**
+		 * App中的 支付宝 支付
+		 * @param unknown $money
+		 * @param unknown $orderNo
+		 * @param unknown $channel
+		 */
+		public static function AppPay($money,$orderNo,$channel)
+		{
+			$api_key = Yii::$app->params['API_KEY'];
+			$app_id = Yii::$app->params['PAPP_ID'];
+			
+			//引入你的签名私钥
+			$path = dirname(dirname(__FILE__)).'/components/pingpp/rsa_private_key.pem';
+			\Pingpp\Pingpp::setPrivateKeyPath($path);
+			$extra = array();
+			\Pingpp\Pingpp::setApiKey($api_key); //设置API-KEY
+			
+			
+			try {
+				//create方法表示发送支付请求到ping++平台，$ch表示请求成功时返回的charge对象（json格式），服务器端如果发起请求成功，此时只需要把charge对象传递给APP客户端，交给客户端处理
+				$ch = \Pingpp\Charge::create([
+					'subject'   => '电影票', //关于这些参数的意义，请参考文档https://www.pingxx.com/api#api-c-new
+					'body'      => '憶條街电影票',
+					'amount'    => $money,
+					'order_no'  => $orderNo,
+					'currency'  => 'cny',    //货币代码
+// 					'extra'     => $extra,
+					'channel'   => $channel,
+					'client_ip' => $_SERVER['REMOTE_ADDR'],
+					'app'       =>  ['id' => $app_id]
+				]);
+				
+				return $ch;
+				
+			} catch (\Pingpp\Error\Base $e) { //如果发起支付请求失败，则抛出异常
+				// 捕获报错信息
+				if ($e->getHttpStatus() != NULL) {
+					header('Status: ' . $e->getHttpStatus());
+					echo $e->getHttpBody();
+				} else {
+					echo $e->getMessage();
+				}
+			}
+			
+		}
+		
+		
+		
+		
+		
 
 		/* *
 		 * 验证 webhooks 签名方法：
@@ -789,5 +840,6 @@ class Helper extends Controller
 			
 			return false;
 		}
+		
 		
 }

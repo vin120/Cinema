@@ -223,5 +223,66 @@ class OrderController extends BaseController
 	}
 	
 	
+	/**
+	 * App用的「alipay」 接口
+	 */
+	public function actionPay()
+	{
+		$ssid = Yii::$app->request->post("ssid");
+		$channel = Yii::$app->request->post("channel");
+		
+		if(empty($ssid)) {
+			$response = ['code' => 2,'msg' => 'ssid不能爲空'];
+			return $response;
+			Yii::$app->end();
+		}
+		
+		
+		if(empty($channel)){
+			$response = ['code' => 3,'msg' => '支付渠道channel不能爲空'];
+			return $response;
+			Yii::$app->end();
+		}
+		
+		
+		if($channel != "alipay" && $channel != "wx"){
+			$response = ['code' => 4,'msg' => '支付渠道channel只能填alipay 或者 wx'];
+			return $response;
+			Yii::$app->end();
+		}
+		
+		
+		
+		$online_order = MovieOnlineOrder::find()->where('order_code = :ssid',[':ssid'=>$ssid])->one();
+		
+		if(is_null($online_order)){
+			$response = ['code' => 5,'msg' => 'ssid不正确'];
+			return $response;
+			Yii::$app->end();
+		}
+		
+		$data = MovieOnlineOrder::findOrderDetail($online_order);
+	
+		
+		//汇率
+		$mop = Helper::rate();
+		$money = $data['total_money'] *100 * $mop;
+		
+		
+		//調用支付接口
+		$ch = Helper::AppPay($money, $data['order_number'], $channel);
+		
+		//返回的消息
+		$response = json_decode($ch,true);
+		$id = $response['id'];
+		
+		//寫入支付方式
+		MovieOnlineOrder::updateAll(['payment'=>$channel,'charge_id'=>$id,'pay_time'=>date("Y-m-d H:i:s",time())],'order_number = :order_number',[':order_number'=>$data['order_number']]);
+		echo $ch;
+		
+		
+	}
+	
+	
 	
 }

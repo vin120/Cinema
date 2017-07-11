@@ -35,7 +35,7 @@ class MyUrl
 			$seat_url = $cookies['seat_url']->value;
 			Yii::$app->getResponse()->redirect($seat_url);
 		}else{
-			Yii::$app->getResponse()->redirect(['/user/index']);
+			Yii::$app->getResponse()->redirect(['/index/index']);
 		}
 	}
 	
