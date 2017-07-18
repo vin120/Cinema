@@ -264,6 +264,8 @@ class User extends ActiveRecord implements IdentityInterface
 			} else {
 				$phones = $this->area.$this->user_phone;
 				$ch = Helper::sendInternational($phones, $c_code);
+				
+				var_dump($ch);exit;
 			}
 			
 			//保存驗證碼到數據庫中

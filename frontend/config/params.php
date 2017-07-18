@@ -51,4 +51,7 @@ return [
 		
 	//redirect_url ,该地址的域名需在微信公众号平台上进行设置，步骤为：登陆微信公众号平台 => 开发者中心 => 网页授权获取用户基本信息 => 修改
 	'redirect_url' => 'http://www.macaoyi.com/order/getwxcode',
+		
+	//匯率查詢的appKey
+	'appKey' => 'c28b98b82e0ad99835a208029a8ca546',
 ];

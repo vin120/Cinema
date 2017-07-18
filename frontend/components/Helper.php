@@ -275,7 +275,7 @@ class Helper extends Controller
 			$postArr = array (
 					'un' => Yii::$app->params['un'],
 					'pw' => Yii::$app->params['pw'],
-					'msg' =>'【亿条街】您的验证码是'.$msg.'，验证码 5 分钟内有效。请勿将验证码转发他人！',
+					'msg' =>'【憶條街】您的验证码是'.$msg.'，验证码 5 分钟内有效。请勿将验证码转发他人！',
 					'phone' => $mobile,
 					'rd' => $needstatus
 			);
@@ -307,7 +307,7 @@ class Helper extends Controller
 		 * @param number $isreport 是否需要状态报告
 		 */
 		public  static function sendInternational($phone,$content,$isreport=0){
-			$text = '【憶條街】您的驗證碼是'.$content.'，驗證碼 5 分針內有效。請勿將驗證碼轉發他人！';
+			$text = '【憶條街】您的驗證碼是'.$content.'，驗證碼 5 分鍾內有效。請勿將驗證碼轉發他人！';
 			$requestData=array(
 					'un'=>Yii::$app->params['uns'],
 					'pw'=>Yii::$app->params['pws'],
@@ -429,7 +429,7 @@ class Helper extends Controller
 		 * @return mixed|string
 		 */
 		public static function rate(){
-			$appkey = 'c28b98b82e0ad99835a208029a8ca546';
+			$appkey = Yii::$app->params['appKey'];
 			//************实时汇率查询换算************
 			$url = "http://op.juhe.cn/onebox/exchange/currency";
 			$params = array(

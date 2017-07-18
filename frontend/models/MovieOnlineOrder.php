@@ -13,8 +13,6 @@ class MovieOnlineOrder extends ActiveRecord
 	}
 	
 	
-	
-	
 	/**
 	 * 獲取用戶訂單
 	 * @param unknown $page
@@ -28,7 +26,7 @@ class MovieOnlineOrder extends ActiveRecord
 		
 		
 		//更改「已過期」 並且 「未支付」的訂單 「狀態」 	
-		MovieOnlineOrder::updateAll(['status'=>2],'status = 0 and order_time < :time',[':time'=>date("Y-m-d H:i:s",strtotime('-15 minutes'))]);
+		MovieOnlineOrder::updateAll(['status'=>2],'status = 0 and order_time < :time',[':time'=>date("Y-m-d H:i:s",strtotime('-10 minutes'))]);
 		
 		$online_order = MovieOnlineOrder::find()->where('phone = :phone and status != 2',[':phone'=>$phone])->offset(($page-1)*10)->limit(10)->orderBy('id desc')->all();
 	
@@ -84,7 +82,7 @@ class MovieOnlineOrder extends ActiveRecord
 		$data['service_price'] = $cinema->service_price;
 		$data['price'] = $online_order->price + $cinema->service_price;
 		$data['total_money'] = $online_order->total_money + $online_order->count * $cinema->service_price;
-		$data['order_time'] = date("Y-m-d H:i:s",strtotime($online_order->order_time)+900) ;
+		$data['order_time'] = date("Y-m-d H:i:s",strtotime($online_order->order_time)+600) ;
 		$data['address'] = $cinema->cinema_address;
 		$data['order_code'] = $online_order->order_code;
 		$data['order_number'] = $online_order->order_number;
@@ -124,7 +122,7 @@ class MovieOnlineOrder extends ActiveRecord
 		$data['service_price'] = $cinema->service_price;
 		$data['price'] = $online_order->price + $cinema->service_price;
 		$data['total_money'] = $online_order->total_money + $online_order->count * $cinema->service_price;
-		$data['remaining_time'] = date("Y-m-d H:i:s",strtotime($online_order->order_time)+900) ;
+		$data['remaining_time'] = date("Y-m-d H:i:s",strtotime($online_order->order_time)+600) ;
 		$data['order_number'] = $online_order->order_number;
 		$data['ssid'] = $online_order->order_code;
 	
